@@ -1,0 +1,197 @@
+# Python Data Analysis Standard
+
+Workflow and code conventions for data analysis: loading, inspection, cleaning, exploration, and visualization.
+
+> **Entry point.** Every data science project starts here. Modeling (ML/AI) is out of scope for this document → see `data-science.md`. Analysis ends by delivering clean, documented data ready for modeling.
+
+---
+
+## 1. First decision: Notebook vs Script
+
+Before writing a single line of analysis, decide how you will work. These are **two separate decisions** worth not mixing:
+
+1. **Where you develop the cleaning/exploration** — almost always interactive, step by step, to iterate without re-running everything each time.
+2. **What the final format is** (the source of truth) — notebook if it is a one-off analysis, script if it must be reproducible or repeatable.
+
+> **Startup rule:** when starting any analysis work, the first thing is to define the final format. If you work with an assistant (Claude), it must ask you **before** generating code.
+
+**Development: start in a notebook (almost always).**
+Even if the destination is a script, prototype the cleaning in a notebook: run a step, inspect the result, adjust — without reloading the data or re-running the whole pipeline on each change. Once the steps stabilize, consolidate them into a script.
+
+Exception: if the cleaning is **trivial and already known** (recurring pipeline with a fixed schema), you can go straight to a script.
+
+**Final format — decision rule:**
+
+| Situation | Final format |
+|---|---|
+| One-off exploration — "what is in this data?" | Notebook |
+| Analysis report that is delivered and not re-run | Notebook |
+| Steps you will repeat or re-run with new data | Script |
+| Cleaning pipeline that feeds modeling | Script |
+| Process that will run in cron / CI / production | Script |
+
+**Default pattern — explore then consolidate:**
+
+```python
+# 1. Notebook: build the cleaning step by step
+#    notebooks/01_exploration.ipynb  -> iterate without re-running everything
+
+# 2. Script: once the steps are clear, consolidate them reproducibly
+#    scripts/clean_data.py  -> runs from scratch and produces data/processed/
+```
+
+**Alternative: `# %%` cells in a `.py` (if your editor supports it).**
+Editors like VS Code (Python extension) or Spyder recognize the `# %%` marker inside a `.py` and run the block between markers as a "cell", just like a notebook but over a normal script.
+
+```python
+# %%
+import pandas as pd
+df = pd.read_csv('data/raw/ventas.csv')
+
+# %%
+df = df.dropna()
+df.head()        # see the result inline, without re-running the load
+```
+
+The `# %%` markers are **just comments**: `python clean_data.py` runs the whole file and ignores the markers. The same file is both an iteration surface (like a notebook) **and** a reproducible script — collapsing "explore → consolidate" into a single step.
+
+| | Notebook (`.ipynb`) | Script with `# %%` | Plain script (`.py`) |
+|---|---|---|---|
+| Cell-by-cell iteration | ✅ | ✅ (editor-dependent) | ❌ |
+| Reproducible from scratch | ⚠️ depends on order | ✅ | ✅ |
+| Clean git diff | ❌ (JSON + outputs) | ✅ | ✅ |
+| Inline visualization | ✅ | ✅ | ❌ |
+
+> **Tip:** to avoid repeating expensive steps (loading a large CSV, a slow transform), save the intermediate result in `data/processed/` and start from there. (More in §8 Reproducibility.)
+
+```python
+# ❌ BAD — critical cleaning that feeds the model living only in notebook
+#          cells, with mutable state and run out of order
+df = df.dropna()                           # cell 12
+df['fecha'] = pd.to_datetime(df['fecha'])  # cell 4, run afterwards
+# nobody can reproduce this without guessing the cell order
+
+# ✅ GOOD — explore in a notebook; the cleaning is consolidated into a script
+#          that runs start to finish without depending on prior state
+# scripts/clean_data.py  ->  python scripts/clean_data.py
+```
+
+**Rules:**
+- Separate the two decisions: **where you develop** (interactive) vs **final format** (the table).
+- By default: prototype the cleaning in a notebook and consolidate to a script if it must be reproducible.
+- If your editor supports `# %%` cells (VS Code, Spyder), use them to "explore → consolidate" in a single file: iterate like a notebook and the result is already a reproducible script.
+- Exception: trivial, known cleaning → straight to a script.
+- Notebook = exploration/iteration and one-off analysis; Script = reproducibility and repetition.
+- Don't leave critical logic half-way between notebook and script — pick one as the source of truth.
+
+---
+
+## 2. Analysis project structure
+
+A predictable structure that separates raw data, processed data, exploration, and reproducible logic. (For the general structure of any project, see `general/project-structure.md`; this is the analysis-specific variant.)
+
+```
+project/
+├─ notebooks/
+│  ├─ 01_exploration.ipynb
+│  ├─ 02_cleaning.ipynb
+│  └─ 03_analysis.ipynb
+├─ data/
+│  ├─ raw/          # original data, NEVER modified
+│  └─ processed/    # clean data, generated by code
+├─ scripts/
+│  └─ clean_data.py
+├─ outputs/
+│  └─ figures/      # exported charts
+├─ requirements.txt
+└─ README.md
+```
+
+**What goes in each folder:**
+
+| Folder | What it contains | Rule |
+|---|---|---|
+| `data/raw/` | Original data exactly as received | Read-only, never modify |
+| `data/processed/` | Clean / transformed data | Generated by code, regenerable |
+| `notebooks/` | Exploration and analysis (numbered `.ipynb`) | Logical order: `01_`, `02_`… |
+| `scripts/` | Reproducible logic (cleaning, pipelines) | Runs start to finish |
+| `outputs/figures/` | Exported charts | Generated, regenerable |
+
+```python
+# ❌ BAD — overwrite the original data with the clean version
+df = pd.read_csv('data/raw/ventas.csv')
+df = df.dropna()
+df.to_csv('data/raw/ventas.csv', index=False)  # you lost the original forever
+
+# ✅ GOOD — read from raw/, write to processed/
+df = pd.read_csv('data/raw/ventas.csv')
+df = df.dropna()
+df.to_csv('data/processed/ventas_clean.csv', index=False)
+```
+
+**Rules:**
+- `data/raw/` is **read-only** — sacred. Never modify or overwrite it.
+- Everything generated (`processed/`, `figures/`) is **regenerable from code** — not a source of truth, not edited by hand.
+- Numbered notebooks (`NN_name.ipynb`) in the order they are read/run.
+- Start simple: if the project is small, you don't need `scripts/` or `outputs/`. Add folders when you need them.
+
+---
+
+## 3. Loading data
+
+Load data **explicitly** and reproducibly: correct types from the start and non-hardcoded paths. Pandas' automatic inference is convenient but treacherous on critical columns.
+
+**Load by format:**
+
+| Format | Function | Typical use |
+|---|---|---|
+| CSV | `pd.read_csv()` | The most common; exchange with humans/Excel |
+| Excel | `pd.read_excel()` | `.xlsx` files with sheets |
+| Parquet | `pd.read_parquet()` | Processed data: fast and preserves types |
+
+**Specify on load — don't trust inference:**
+
+```python
+# ❌ BAD — load without specifying anything, with a hardcoded absolute path
+df = pd.read_csv('C:/Users/Karim/Desktop/data.csv')
+# 'codigo_postal' is inferred as int -> "01234" becomes 1234 (loses the 0)
+# 'fecha' stays a string -> you can't operate on dates
+
+# ✅ GOOD — explicit load, relative path from config
+from config import RAW_DATA_DIR
+
+df = pd.read_csv(
+    RAW_DATA_DIR / 'ventas.csv',
+    dtype={'codigo_postal': str, 'id_cliente': str},  # IDs/codes as text
+    parse_dates=['fecha'],                             # dates as datetime
+    encoding='utf-8',
+)
+```
+
+**Paths in `config.py`, never hardcoded** (see `code-standards.md` §13):
+
+```python
+# config.py
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+RAW_DATA_DIR = BASE_DIR / 'data' / 'raw'
+PROCESSED_DATA_DIR = BASE_DIR / 'data' / 'processed'
+```
+
+**Format for saving `data/processed/`:**
+
+| You need | Format |
+|---|---|
+| A human to open it / manual inspection / Excel | CSV |
+| Fast reload, large datasets, preserve types | Parquet |
+
+**Rules:**
+- Specify `dtype` and `parse_dates` on load — never trust inference for IDs, codes, or dates.
+- Relative paths from `config.py` + `pathlib`, never hardcoded absolute paths.
+- For `processed/`, prefer Parquet if you will reload (fast, preserves types); CSV if a human will open it.
+- Verify the load immediately with `.shape` and `.dtypes` (links to §4).
+
+---
+
+<!-- In progress — 3/10 sections. Next: §4 Initial inspection. -->

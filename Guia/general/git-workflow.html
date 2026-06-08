@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git Workflow — Development Standards</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#e2e8f0; padding:36px 44px; line-height:1.75; }
+  h1 { font-size:1.9em; color:#60a5fa; margin-bottom:6px; }
+  .tagline { color:#94a3b8; margin-bottom:36px; font-size:0.96em; }
+  .card { background:#1e293b; border:1px solid #334155; border-radius:10px; padding:26px 30px; margin-bottom:22px; }
+  h2 { color:#93c5fd; font-size:1.05em; font-weight:700; margin-bottom:14px; }
+  h3 { color:#7dd3fc; font-size:0.93em; font-weight:600; margin:18px 0 8px; }
+  p { color:#cbd5e1; margin-bottom:10px; font-size:0.93em; }
+  ul, ol { padding-left:22px; margin:10px 0; }
+  li { color:#cbd5e1; margin-bottom:7px; font-size:0.93em; }
+  .code-block { background:#060c16; border:1px solid #1e3a5f; border-left:4px solid #3b82f6; border-radius:6px; padding:18px 20px; font-family:'Courier New',monospace; font-size:0.82em; color:#a7f3d0; white-space:pre; overflow-x:auto; margin:14px 0; line-height:1.55; }
+  code { background:rgba(96,165,250,0.12); color:#93c5fd; padding:2px 7px; border-radius:4px; font-size:0.87em; font-family:'Courier New',monospace; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.88em; }
+  th { background:#0f172a; color:#60a5fa; padding:10px 14px; text-align:left; border-bottom:2px solid #334155; font-size:0.85em; }
+  td { padding:9px 14px; border-bottom:1px solid #1e293b; color:#cbd5e1; vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  .alert { background:rgba(96,165,250,0.08); border-left:4px solid #3b82f6; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-green { background:rgba(16,185,129,0.1); border-left:4px solid #10b981; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-red { background:rgba(239,68,68,0.1); border-left:4px solid #ef4444; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .tag { display:inline-block; background:rgba(96,165,250,0.15); color:#93c5fd; border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:4px 13px; font-size:0.79em; margin:3px 2px; }
+  .commit-type { display:inline-block; background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid rgba(16,185,129,0.3); border-radius:4px; padding:2px 8px; font-size:0.82em; font-family:'Courier New',monospace; margin:2px; }
+  .checklist { list-style:none; padding:0; }
+  .checklist li { padding:8px 0 8px 28px; position:relative; border-bottom:1px solid #263347; font-size:0.91em; }
+  .checklist li:last-child { border:none; }
+  .checklist li:before { content:"✓"; position:absolute; left:4px; color:#10b981; font-weight:700; }
+  .branch-diagram { background:#060c16; border:1px solid #334155; border-radius:8px; padding:20px; font-family:'Courier New',monospace; font-size:0.82em; color:#94a3b8; line-height:1.8; margin:14px 0; }
+  .b-main { color:#f472b6; }
+  .b-develop { color:#60a5fa; }
+  .b-feature { color:#34d399; }
+</style>
+</head>
+<body>
+
+<h1>🔀 Git Workflow</h1>
+<p class="tagline">Cómo gestionar ramas, commits, merges y versiones en todos los proyectos</p>
+
+<!-- QUÉ ES -->
+<div class="card">
+  <h2>¿Qué es?</h2>
+  <p>El estándar de Git Workflow define las reglas para trabajar con control de versiones: cómo nombrar commits, cómo crear y gestionar ramas, cómo hacer merges y cómo versionar releases. Es el protocolo que Claude propone cuando trabaja con git en cualquier proyecto.</p>
+  <p>Un detalle importante: <strong style="color:#93c5fd;">Claude propone los comandos, el usuario los ejecuta.</strong> Claude no corre <code>git commit</code>, <code>git push</code> ni ningún comando que modifique el historial — eso es responsabilidad exclusiva del usuario.</p>
+  <div class="alert-red">
+    <strong style="color:#fca5a5;">Sin AI en el historial:</strong> Claude nunca agrega trailers de co-autoría (<code>Co-Authored-By</code>) ni firma commits como asistente. El historial debe leerse como completamente de autoría humana.
+  </div>
+</div>
+
+<!-- PARA QUÉ SIRVE -->
+<div class="card">
+  <h2>¿Para qué sirve?</h2>
+  <ul>
+    <li><strong style="color:#7dd3fc;">Trazabilidad:</strong> Los Conventional Commits hacen que el historial sea legible por humanos y por herramientas. Se puede entender qué cambió, por qué y en qué área con solo leer el mensaje.</li>
+    <li><strong style="color:#7dd3fc;">Aislamiento de trabajo:</strong> El modelo de ramas (feature/fix → develop → main) garantiza que el código en desarrollo no rompa lo que está en producción.</li>
+    <li><strong style="color:#7dd3fc;">Releases limpios:</strong> El Semantic Versioning comunica con precisión qué tipo de cambios trae cada versión — sin ambigüedades para el equipo o los usuarios.</li>
+    <li><strong style="color:#7dd3fc;">Reversibilidad:</strong> Al tener main siempre estable, un problema en develop nunca contamina el código de producción.</li>
+    <li><strong style="color:#7dd3fc;">Colaboración predecible:</strong> Cuando todos siguen las mismas reglas de naming y merging, el trabajo conjunto se vuelve mecánico — no hace falta adivinar qué hizo cada rama.</li>
+  </ul>
+</div>
+
+<!-- POR QUÉ ESTE ENFOQUE -->
+<div class="card">
+  <h2>¿Por qué este enfoque?</h2>
+  <p>Los <strong style="color:#93c5fd;">Conventional Commits</strong> se eligieron porque son el estándar de la industria más adoptado, permiten generar CHANGELOGs automáticamente, y son legibles tanto por personas como por herramientas de CI/CD.</p>
+  <p>El modelo de <strong style="color:#93c5fd;">tres ramas (main / develop / feature)</strong> es una versión simplificada de Gitflow. No usa <code>release/</code> ni <code>hotfix/</code> porque añaden complejidad sin beneficio claro en proyectos personales o pequeños equipos.</p>
+  <p>El <strong style="color:#93c5fd;">squash merge</strong> de features a develop mantiene el historial lineal y limpio. Cada feature se convierte en un único commit significativo — no en una secuencia de "fix", "fix2", "wip" que solo tiene sentido para quien trabajó en esa rama.</p>
+  <p>El <strong style="color:#93c5fd;">Semantic Versioning</strong> (MAJOR.MINOR.PATCH) es el contrato más extendido para comunicar cambios: cualquier desarrollador entiende qué significa pasar de v1.2.3 a v2.0.0 sin leer el código.</p>
+</div>
+
+<!-- CON QUÉ -->
+<div class="card">
+  <h2>Con qué</h2>
+  <span class="tag">git</span>
+  <span class="tag">GitHub / GitLab / Bitbucket</span>
+  <span class="tag">Conventional Commits</span>
+  <span class="tag">Semantic Versioning (SemVer)</span>
+  <p style="margin-top:14px;">No se requieren herramientas externas más allá de git. Los mensajes de commit son texto plano con una convención específica.</p>
+</div>
+
+<!-- CÓMO APLICARLO -->
+<div class="card">
+  <h2>Cómo aplicarlo</h2>
+
+  <h3>1. Mensajes de commit — Conventional Commits</h3>
+  <p>Cada commit sigue el formato:</p>
+  <div class="code-block">type(scope): description
+
+# Ejemplos:
+feat(auth): add user login validation
+fix(api): handle null response in fetch
+docs(readme): update installation instructions
+refactor(database): extract connection logic to module
+test(auth): add unit tests for token validation
+chore(deps): update requests to 2.31.0</div>
+
+  <p><strong style="color:#7dd3fc;">Los tipos disponibles:</strong></p>
+  <table>
+    <thead><tr><th>Tipo</th><th>Cuándo usarlo</th></tr></thead>
+    <tbody>
+      <tr><td><code>feat</code></td><td>Nueva funcionalidad para el usuario</td></tr>
+      <tr><td><code>fix</code></td><td>Corrección de un bug</td></tr>
+      <tr><td><code>docs</code></td><td>Cambios solo en documentación</td></tr>
+      <tr><td><code>style</code></td><td>Formato, espacios, punto y coma (sin cambio de lógica)</td></tr>
+      <tr><td><code>refactor</code></td><td>Reestructuración de código sin cambiar comportamiento</td></tr>
+      <tr><td><code>test</code></td><td>Agregar o corregir tests</td></tr>
+      <tr><td><code>chore</code></td><td>Tareas de mantenimiento (deps, config, scripts)</td></tr>
+    </tbody>
+  </table>
+  <p><strong style="color:#7dd3fc;">Reglas del mensaje:</strong></p>
+  <ul>
+    <li>La descripción va en <strong>minúsculas e imperativo</strong>: "add" no "added", "fix" no "fixed"</li>
+    <li>El scope es el área afectada: <code>auth</code>, <code>api</code>, <code>database</code>, <code>ui</code>, etc.</li>
+    <li>Máximo ~72 caracteres en la primera línea</li>
+    <li>Puedes agregar un cuerpo con más contexto separado por una línea en blanco</li>
+  </ul>
+
+  <h3>2. Modelo de ramas</h3>
+  <div class="branch-diagram">
+  <span class="b-main">main</span>  ──────────────────────────────────────────●  v1.1.0
+                                                              ↑
+  <span class="b-develop">develop</span>  ──────────●──────────────────────────────●  squash merge
+                         ↑                               ↑
+  <span class="b-feature">feature/login</span>  ─────●  (terminada)    <span class="b-feature">feature/dashboard</span>  ─────●</div>
+
+  <table>
+    <thead><tr><th>Rama</th><th>Propósito</th><th>Regla</th></tr></thead>
+    <tbody>
+      <tr><td><code>main</code></td><td>Código estable, listo para producción</td><td>Solo recibe merges desde develop, en releases</td></tr>
+      <tr><td><code>develop</code></td><td>Integración; todas las features van aquí primero</td><td>Siempre debe estar en estado "funcional"</td></tr>
+      <tr><td><code>feature/*</code></td><td>Una feature o mejora específica</td><td>Branch off develop · eliminar después del merge</td></tr>
+      <tr><td><code>fix/*</code></td><td>Un bug específico</td><td>Branch off develop · eliminar después del merge</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong style="color:#7dd3fc;">Naming de ramas:</strong> <code>feature/user-login</code>, <code>feature/export-csv</code>, <code>fix/email-validation</code>, <code>fix/null-pointer-api</code></p>
+
+  <h3>3. Merging</h3>
+  <ul>
+    <li><strong>feature → develop:</strong> squash merge. Toda la feature queda como un único commit con mensaje Conventional Commits.</li>
+    <li><strong>develop → main:</strong> merge en cada release. El squash es opcional — un commit por release es suficiente.</li>
+    <li>Una sola feature o fix por rama. Las ramas mixtas son difíciles de revertir y de code-review.</li>
+  </ul>
+
+  <h3>4. Tags — Semantic Versioning</h3>
+  <p>Las versiones siguen el formato <code>vMAJOR.MINOR.PATCH</code>:</p>
+  <table>
+    <thead><tr><th>Cambio</th><th>Qué incrementa</th><th>Ejemplo</th></tr></thead>
+    <tbody>
+      <tr><td>Primer release</td><td>—</td><td><code>v1.0.0</code></td></tr>
+      <tr><td>Nueva funcionalidad (compatible)</td><td>MINOR</td><td><code>v1.0.0 → v1.1.0</code></td></tr>
+      <tr><td>Solo bug fixes</td><td>PATCH</td><td><code>v1.1.0 → v1.1.1</code></td></tr>
+      <tr><td>Cambio que rompe compatibilidad</td><td>MAJOR</td><td><code>v1.1.1 → v2.0.0</code></td></tr>
+    </tbody>
+  </table>
+  <p>Los tags van en <code>main</code> después de cada release merge.</p>
+</div>
+
+<!-- REFERENCIA RÁPIDA -->
+<div class="card">
+  <h2>Referencia rápida</h2>
+  <table>
+    <thead><tr><th>Regla</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td>Commits</td><td><code>type(scope): description</code> — minúsculas, imperativo</td></tr>
+      <tr><td>Ramas</td><td><code>feature/nombre</code> o <code>fix/nombre</code> desde develop</td></tr>
+      <tr><td>main</td><td>Solo código estable; solo recibe merges de develop en releases</td></tr>
+      <tr><td>develop</td><td>Integración de todas las features; siempre funcional</td></tr>
+      <tr><td>Merge a develop</td><td>Squash — 1 commit por feature</td></tr>
+      <tr><td>Merge a main</td><td>En releases; tag con SemVer</td></tr>
+      <tr><td>Claude y git</td><td>Propone comandos, no los ejecuta. Sin trailers de AI.</td></tr>
+      <tr><td>Ramas viejas</td><td>Eliminar después de merge</td></tr>
+    </tbody>
+  </table>
+  <ul class="checklist" style="margin-top:14px;">
+    <li>¿El mensaje de commit sigue el formato <code>type(scope): description</code>?</li>
+    <li>¿La descripción está en minúsculas e imperativo?</li>
+    <li>¿La rama tiene nombre con prefijo <code>feature/</code> o <code>fix/</code>?</li>
+    <li>¿El merge a develop usa squash?</li>
+    <li>¿El tag en main sigue SemVer (<code>vX.Y.Z</code>)?</li>
+    <li>¿Se eliminó la rama después del merge?</li>
+  </ul>
+</div>
+
+</body>
+</html>

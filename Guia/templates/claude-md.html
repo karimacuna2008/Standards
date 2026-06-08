@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLAUDE.md Template</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#e2e8f0; display:flex; flex-direction:column; height:100vh; }
+
+  .header {
+    padding: 24px 32px 20px;
+    flex-shrink: 0;
+  }
+  .header h1 { font-size:1.5em; color:#60a5fa; margin-bottom:4px; }
+  .header p { color:#94a3b8; font-size:0.88em; }
+
+  .actions {
+    padding: 0 32px 20px;
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .copy-btn {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    font-family: 'Segoe UI', sans-serif;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .btn-en {
+    background: #3b82f6;
+    color: #fff;
+  }
+  .btn-en:hover { background: #2563eb; }
+  .btn-en.done { background: #10b981; }
+
+  .btn-es {
+    background: #10b981;
+    color: #fff;
+  }
+  .btn-es:hover { background: #059669; }
+  .btn-es.done { background: #3b82f6; }
+
+  .lang-tabs {
+    padding: 0 32px 0;
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid #334155;
+    flex-shrink: 0;
+  }
+  .lang-tab {
+    padding: 9px 18px;
+    font-size: 0.83em;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .lang-tab:hover { color: #94a3b8; }
+  .lang-tab.active { color: #60a5fa; border-bottom-color: #3b82f6; }
+
+  .content-area {
+    flex: 1;
+    overflow: hidden;
+    padding: 0 32px 32px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pre-wrapper {
+    flex: 1;
+    overflow: auto;
+    margin-top: 16px;
+    background: #060c16;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: #334155 transparent;
+  }
+  .pre-wrapper::-webkit-scrollbar { width: 6px; height: 6px; }
+  .pre-wrapper::-webkit-scrollbar-track { background: transparent; }
+  .pre-wrapper::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+  pre {
+    padding: 22px 26px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.84em;
+    color: #a7f3d0;
+    line-height: 1.65;
+    white-space: pre;
+    min-height: 100%;
+  }
+
+  .error-msg {
+    padding: 22px 26px;
+    color: #fca5a5;
+    font-size: 0.9em;
+    line-height: 1.7;
+  }
+  .error-msg code { background:rgba(239,68,68,0.12); color:#fca5a5; padding:2px 6px; border-radius:3px; font-family:'Courier New',monospace; font-size:0.9em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📄 CLAUDE.md Template</h1>
+  <p>Copia el template en inglés o español para pegarlo al inicio de cualquier proyecto.</p>
+</div>
+
+<div class="actions">
+  <button class="copy-btn btn-en" id="btnEn" onclick="copyContent('en')">
+    <span>📋</span> Copiar EN
+  </button>
+  <button class="copy-btn btn-es" id="btnEs" onclick="copyContent('es')">
+    <span>📋</span> Copiar ES
+  </button>
+</div>
+
+<div class="lang-tabs">
+  <div class="lang-tab active" id="tabEn" onclick="showLang('en')">English</div>
+  <div class="lang-tab" id="tabEs" onclick="showLang('es')">Español</div>
+</div>
+
+<div class="content-area">
+  <div class="pre-wrapper" id="preWrapper">
+    <pre id="contentDisplay" style="display:none"></pre>
+    <div class="error-msg" id="errorMsg" style="display:none">
+      No se pudo cargar el archivo <code>.md</code> automáticamente.<br><br>
+      Abre este archivo desde un servidor local:<br>
+      — VS Code: instala <strong>Live Server</strong> y usa "Open with Live Server"<br>
+      — Terminal: <code>python -m http.server 8080</code> en la carpeta <code>Guia/templates/</code><br><br>
+      O edita directamente los archivos:<br>
+      — Inglés: <code>Guia/templates/claude-md-en.md</code><br>
+      — Español: <code>Guia/templates/claude-md-es.md</code>
+    </div>
+  </div>
+</div>
+
+<script>
+  var contentEN = '';
+  var contentES = '';
+  var currentLang = 'en';
+
+  function showLang(lang) {
+    currentLang = lang;
+    document.getElementById('tabEn').classList.toggle('active', lang === 'en');
+    document.getElementById('tabEs').classList.toggle('active', lang === 'es');
+    document.getElementById('contentDisplay').textContent = lang === 'en' ? contentEN : contentES;
+  }
+
+  function copyContent(lang) {
+    var content = lang === 'en' ? contentEN : contentES;
+    if (!content) return;
+    var btnId = lang === 'en' ? 'btnEn' : 'btnEs';
+    var btn = document.getElementById(btnId);
+    var original = btn.innerHTML;
+    navigator.clipboard.writeText(content).then(function() {
+      btn.innerHTML = '<span>✓</span> Listo';
+      btn.classList.add('done');
+      setTimeout(function() { btn.innerHTML = original; btn.classList.remove('done'); }, 2000);
+    }).catch(function() {
+      btn.textContent = 'Error al copiar';
+      setTimeout(function() { btn.innerHTML = original; }, 2000);
+    });
+  }
+
+  Promise.all([
+    fetch('./claude-md-en.md').then(function(r) { return r.text(); }),
+    fetch('./claude-md-es.md').then(function(r) { return r.text(); })
+  ]).then(function(results) {
+    contentEN = results[0];
+    contentES = results[1];
+    document.getElementById('contentDisplay').style.display = 'block';
+    document.getElementById('contentDisplay').textContent = contentEN;
+  }).catch(function() {
+    document.getElementById('errorMsg').style.display = 'block';
+  });
+</script>
+</body>
+</html>

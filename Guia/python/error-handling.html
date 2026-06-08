@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Error Handling — Development Standards</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#e2e8f0; padding:36px 44px; line-height:1.75; }
+  h1 { font-size:1.9em; color:#60a5fa; margin-bottom:6px; }
+  .tagline { color:#94a3b8; margin-bottom:36px; font-size:0.96em; }
+  .card { background:#1e293b; border:1px solid #334155; border-radius:10px; padding:26px 30px; margin-bottom:22px; }
+  h2 { color:#93c5fd; font-size:1.05em; font-weight:700; margin-bottom:14px; }
+  h3 { color:#7dd3fc; font-size:0.93em; font-weight:600; margin:18px 0 8px; }
+  p { color:#cbd5e1; margin-bottom:10px; font-size:0.93em; }
+  ul, ol { padding-left:22px; margin:10px 0; }
+  li { color:#cbd5e1; margin-bottom:7px; font-size:0.93em; }
+  .code-block { background:#060c16; border:1px solid #1e3a5f; border-left:4px solid #3b82f6; border-radius:6px; padding:18px 20px; font-family:'Courier New',monospace; font-size:0.82em; color:#a7f3d0; white-space:pre; overflow-x:auto; margin:14px 0; line-height:1.55; }
+  code { background:rgba(96,165,250,0.12); color:#93c5fd; padding:2px 7px; border-radius:4px; font-size:0.87em; font-family:'Courier New',monospace; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.88em; }
+  th { background:#0f172a; color:#60a5fa; padding:10px 14px; text-align:left; border-bottom:2px solid #334155; font-size:0.85em; }
+  td { padding:9px 14px; border-bottom:1px solid #1e293b; color:#cbd5e1; vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  .alert { background:rgba(96,165,250,0.08); border-left:4px solid #3b82f6; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-green { background:rgba(16,185,129,0.1); border-left:4px solid #10b981; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-red { background:rgba(239,68,68,0.1); border-left:4px solid #ef4444; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-yellow { background:rgba(234,179,8,0.1); border-left:4px solid #eab308; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .tag { display:inline-block; background:rgba(96,165,250,0.15); color:#93c5fd; border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:4px 13px; font-size:0.79em; margin:3px 2px; }
+  .checklist { list-style:none; padding:0; }
+  .checklist li { padding:8px 0 8px 28px; position:relative; border-bottom:1px solid #263347; font-size:0.91em; }
+  .checklist li:last-child { border:none; }
+  .checklist li:before { content:"✓"; position:absolute; left:4px; color:#10b981; font-weight:700; }
+  .level-badge { display:inline-block; padding:2px 10px; border-radius:12px; font-size:0.79em; font-weight:700; margin-right:6px; }
+  .lvl1 { background:rgba(234,179,8,0.2); color:#fcd34d; border:1px solid rgba(234,179,8,0.4); }
+  .lvl2 { background:rgba(96,165,250,0.2); color:#93c5fd; border:1px solid rgba(96,165,250,0.4); }
+  .lvl3 { background:rgba(239,68,68,0.2); color:#fca5a5; border:1px solid rgba(239,68,68,0.4); }
+</style>
+</head>
+<body>
+
+<h1>🛡️ Python Error Handling</h1>
+<p class="tagline">Cómo manejar errores, excepciones y fallos en Python: cuándo absorber, cuándo lanzar, y cómo limpiar recursos</p>
+
+<!-- QUÉ ES -->
+<div class="card">
+  <h2>¿Qué es?</h2>
+  <p>El estándar de Error Handling define el <strong style="color:#93c5fd;">control de flujo ante fallos</strong>: qué hacer cuando algo sale mal en diferentes partes del código. Cubre tres jerarquías de respuesta según la severidad, la decisión de absorber vs relanzar excepciones, validación de variables de entorno, manejo de archivos externos, excepciones personalizadas, encadenamiento de excepciones, limpieza de recursos, y la diferencia entre <code>logging.exception()</code> y <code>logging.error()</code>.</p>
+  <div class="alert">
+    La mecánica de logging (configurar handlers, niveles, formatos) está en <code>python/observability.md</code> (pendiente). Este estándar solo define qué nivel de logging usar ante cada tipo de error.
+  </div>
+</div>
+
+<!-- PARA QUÉ SIRVE -->
+<div class="card">
+  <h2>¿Para qué sirve?</h2>
+  <ul>
+    <li><strong style="color:#7dd3fc;">Evita errores silenciosos:</strong> Absorber una excepción con <code>except: pass</code> es una de las causas más difíciles de diagnosticar — el código falla en otro lugar y no hay rastro de dónde empezó el problema.</li>
+    <li><strong style="color:#7dd3fc;">Proporcionalidad:</strong> No todos los errores son iguales. Un campo opcional faltante no merece matar el script; una configuración inválida sí.</li>
+    <li><strong style="color:#7dd3fc;">Tracebacks preservados:</strong> El encadenamiento de excepciones (<code>raise X from e</code>) asegura que el traceback original no se pierda al re-lanzar con otro tipo de excepción.</li>
+    <li><strong style="color:#7dd3fc;">Recursos siempre liberados:</strong> Los context managers y <code>finally</code> garantizan que archivos, conexiones y temporales se cierren incluso cuando hay errores.</li>
+    <li><strong style="color:#7dd3fc;">Diagnóstico rápido:</strong> Saber qué nivel de logging usar (<code>exception</code> vs <code>error</code>) hace que los tracebacks aparezcan cuando los necesitas y no cuando añaden ruido.</li>
+  </ul>
+</div>
+
+<!-- POR QUÉ -->
+<div class="card">
+  <h2>¿Por qué este enfoque?</h2>
+  <p><strong style="color:#93c5fd;">Jerarquía de 3 niveles:</strong> La respuesta ante un error debe ser proporcional a su gravedad. Un script que usa <code>sys.exit(1)</code> para todo es tan malo como uno que ignora todo con <code>pass</code> — ambos extremos son inutilizables. La jerarquía provee un marco de decisión claro.</p>
+  <p><strong style="color:#93c5fd;">Validar env vars al inicio, todas juntas:</strong> Fallar lo antes posible (fail-fast) es una práctica de ingeniería fundamental. Descubrir que falta <code>SECRET_TOKEN</code> después de 2 minutos de procesamiento es peor que descubrirlo al arrancar. Reportar todas las variables faltantes juntas ahorra un ciclo de fix-run-fail por variable.</p>
+  <p><strong style="color:#93c5fd;">raise X from e (exception chaining):</strong> Cuando conviertes un <code>JSONDecodeError</code> en un <code>ConfigError</code>, perder el traceback del JSON hace el debugging imposible. Con <code>from e</code> ambos errores aparecen en el traceback — el original y el nuevo.</p>
+  <p><strong style="color:#93c5fd;">Excepciones específicas:</strong> Las excepciones built-in genéricas (<code>Exception</code>) capturan todo — incluidos <code>KeyboardInterrupt</code> y <code>SystemExit</code>. Excepciones específicas hacen que el <code>except</code> capture exactamente lo que esperas, no más.</p>
+</div>
+
+<!-- CON QUÉ -->
+<div class="card">
+  <h2>Con qué</h2>
+  <span class="tag">try/except (builtin)</span>
+  <span class="tag">sys (stdlib)</span>
+  <span class="tag">logging (stdlib)</span>
+  <span class="tag">contextlib (stdlib)</span>
+  <span class="tag">json (stdlib)</span>
+  <p style="margin-top:14px;">Todo de la stdlib. No se requieren librerías externas para manejo de errores básico.</p>
+</div>
+
+<!-- CÓMO APLICARLO -->
+<div class="card">
+  <h2>Cómo aplicarlo</h2>
+
+  <h3>1. Jerarquía de respuesta — 3 niveles</h3>
+  <table>
+    <thead><tr><th>Nivel</th><th>Cuándo</th><th>Respuesta</th></tr></thead>
+    <tbody>
+      <tr><td><span class="level-badge lvl1">Nivel 1</span></td><td>Error menor, el proceso puede continuar</td><td><code>print</code> + <code>continue</code> / <code>skip</code></td></tr>
+      <tr><td><span class="level-badge lvl2">Nivel 2</span></td><td>Operación falló, el caller decide qué hacer</td><td><code>return None</code> o raise una excepción</td></tr>
+      <tr><td><span class="level-badge lvl3">Nivel 3</span></td><td>Config inválida, credencial faltante, fallo irrecuperable</td><td><code>sys.exit(1)</code></td></tr>
+    </tbody>
+  </table>
+  <div class="code-block"># Nivel 1 — error menor, el script continúa
+for user in users:
+    if not user.get('email'):
+        print(f"  ⚠️ User {user['id']} has no email — skipping")
+        continue
+
+# Nivel 2 — operación fallida, el caller maneja
+def process_file(path: str) -> dict | None:
+    if not os.path.exists(path):
+        print(f"  ✗ File not found: {path}")
+        return None
+
+# Nivel 3 — error fatal en inicialización
+def main():
+    if not API_KEY:
+        print("  ✗ API_KEY not set — cannot continue")
+        sys.exit(1)</div>
+
+  <h3>2. Absorber vs Relanzar (Raise vs Absorb)</h3>
+  <div class="code-block"># ✅ ABSORBER — cuando puedes manejar el error completamente aquí
+def get_user_age(user: dict) -> int:
+    try:
+        return int(user['age'])
+    except (KeyError, ValueError):
+        return 0  # valor por defecto; el caller no necesita saber
+
+# ✅ RELANZAR — cuando el caller necesita saber que falló
+def load_config(path: str) -> dict:
+    try:
+        with open(path, encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise  # el caller decide qué hacer si no hay config
+
+# ❌ ABSORBER SIN ACCIÓN — el peor caso: error silencioso
+def load_config(path: str) -> dict:
+    try:
+        with open(path, encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        pass  # ¿qué retorna? ¿qué sabe el caller? Nada.</div>
+  <p>Regla: si absorbes, siempre hay una acción: loguear, retornar un default, o imprimir. Nunca absorber en silencio (<code>except: pass</code>).</p>
+
+  <h3>3. Validar variables de entorno al inicio</h3>
+  <div class="code-block">import os, sys
+from dotenv import load_dotenv
+
+def validate_env() -> None:
+    """Verificar que todas las variables requeridas están configuradas."""
+    load_dotenv()
+
+    required = ['API_KEY', 'DATABASE_URL', 'SECRET_TOKEN']
+    missing = [var for var in required if not os.getenv(var)]
+
+    if missing:
+        print(f"  ✗ Missing required environment variables: {', '.join(missing)}")
+        sys.exit(1)
+
+def main():
+    validate_env()  # siempre primero
+    # resto del script...</div>
+  <ul>
+    <li>Función dedicada <code>validate_env()</code> — no inline en <code>main()</code></li>
+    <li>Validar <em>todas</em> las variables juntas en un solo mensaje</li>
+    <li><code>sys.exit(1)</code> inmediato si falta alguna — nunca continuar con <code>None</code></li>
+    <li>Primera llamada en <code>main()</code>, antes de cualquier otra inicialización</li>
+  </ul>
+
+  <h3>4. Archivos externos — qué excepciones capturar</h3>
+  <div class="code-block"># Cualquier archivo de texto (.txt, .log, .md, etc.)
+try:
+    with open(path, encoding='utf-8') as f:
+        content = f.read()
+except FileNotFoundError:
+    print(f"  ✗ File not found: {path}")
+    sys.exit(1)
+
+
+# JSON — agregar JSONDecodeError (puede existir pero estar corrupto)
+try:
+    with open(path, encoding='utf-8') as f:
+        data = json.load(f)
+except FileNotFoundError:
+    print(f"  ✗ File not found: {path}")
+    sys.exit(1)
+except json.JSONDecodeError as e:
+    print(f"  ✗ Invalid JSON in {path}: {e}")
+    sys.exit(1)
+
+
+# CSV — FileNotFoundError es suficiente
+try:
+    with open(path, encoding='utf-8') as f:
+        data = list(csv.DictReader(f))
+except FileNotFoundError:
+    print(f"  ✗ File not found: {path}")
+    sys.exit(1)</div>
+  <p>Siempre incluir el <code>path</code> en el mensaje de error. Siempre <code>encoding='utf-8'</code> explícito. Para XML, YAML, TOML: agregar el parser error específico de ese formato.</p>
+
+  <h3>5. Excepciones personalizadas</h3>
+  <div class="code-block"># ✅ Usar built-ins para errores genéricos
+raise ValueError("Invalid email format")
+raise TypeError("Expected string, got int")
+raise KeyError("Required key 'user_id' not found")
+
+
+# ✅ Crear excepciones propias cuando el caller necesita capturarlas por tipo
+class ConfigError(Exception):
+    """Raised when configuration is missing or invalid."""
+    pass
+
+class APIAuthError(Exception):
+    """Raised when API credentials are invalid or expired."""
+    pass
+
+
+# El caller puede capturar solo ese tipo específico
+try:
+    load_config('config.json')
+except ConfigError as e:
+    print(f"  ✗ Configuration problem: {e}")
+    sys.exit(1)</div>
+  <p>Nombre siempre termina en <code>Error</code>. Heredar de <code>Exception</code>, no de <code>BaseException</code>. Definir al top del módulo o en un <code>exceptions.py</code> si hay varias.</p>
+
+  <h3>6. Encadenamiento de excepciones — raise X from e</h3>
+  <div class="code-block"># ✅ Preserva el traceback original
+def load_config(path: str) -> dict:
+    try:
+        with open(path, encoding='utf-8') as f:
+            return json.load(f)
+    except json.JSONDecodeError as e:
+        raise ConfigError(f"Config file is corrupted: {path}") from e
+# Traceback muestra: JSONDecodeError (causa) + ConfigError (resultado)
+
+
+# ❌ Pierde el traceback original
+def load_config(path: str) -> dict:
+    try:
+        with open(path, encoding='utf-8') as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        raise ConfigError(f"Config file is corrupted: {path}")
+        # Solo muestra ConfigError — no sabes en qué línea falló el JSON</div>
+  <p>Suprimir el original explícitamente cuando es intencional: <code>raise ConfigError(...) from None</code>.</p>
+
+  <h3>7. Limpieza de recursos — with vs finally</h3>
+  <div class="code-block"># ✅ Context manager — preferido cuando el objeto lo soporta
+with open('data.json', encoding='utf-8') as f:
+    data = json.load(f)  # f.close() es automático
+
+# ✅ Múltiples recursos en una línea
+with open('input.csv', encoding='utf-8') as fin, open('output.csv', 'w') as fout:
+    pass
+
+# ✅ finally — para cleanup sin context manager
+temp_path = create_temp_file()
+try:
+    process(temp_path)
+finally:
+    os.remove(temp_path)  # siempre se elimina, incluso si process() falla</div>
+
+  <h3>8. logging.exception() vs logging.error()</h3>
+  <div class="code-block">import logging
+
+try:
+    result = int("abc")
+except ValueError as e:
+
+    # logging.error() — solo el mensaje
+    logging.error(f"Conversion failed: {e}")
+    # Output: ERROR - Conversion failed: invalid literal...
+
+    # logging.exception() — mensaje + traceback completo
+    logging.exception(f"Conversion failed: {e}")
+    # Output: ERROR - Conversion failed...
+    #         Traceback (most recent call last):
+    #           File "script.py", line 2 ...
+    #         ValueError: invalid literal for int()...</div>
+  <table>
+    <thead><tr><th>Situación</th><th>Usar</th></tr></thead>
+    <tbody>
+      <tr><td>Dentro de un bloque <code>except</code> y quieres el traceback</td><td><code>logging.exception()</code></td></tr>
+      <tr><td>Fuera de <code>except</code>, o el traceback no aporta contexto</td><td><code>logging.error()</code></td></tr>
+      <tr><td>Errores esperados y controlados (input inválido del usuario)</td><td><code>logging.warning()</code></td></tr>
+    </tbody>
+  </table>
+  <p>Dentro de un <code>except</code>, usar <code>logging.exception()</code> por defecto — el traceback no cuesta nada y ayuda enormemente al debugging.</p>
+</div>
+
+<!-- REFERENCIA RÁPIDA -->
+<div class="card">
+  <h2>Referencia rápida</h2>
+  <table>
+    <thead><tr><th>Regla</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td>Jerarquía de respuesta</td><td>print+continue → return None → sys.exit(1)</td></tr>
+      <tr><td>Absorber vs relanzar</td><td>Absorber si tienes default; relanzar si el caller necesita saber</td></tr>
+      <tr><td>Silencio</td><td>Nunca <code>except: pass</code> — siempre una acción</td></tr>
+      <tr><td>Env vars</td><td><code>validate_env()</code> primero, todas juntas, <code>sys.exit(1)</code> si faltan</td></tr>
+      <tr><td>Archivos</td><td><code>FileNotFoundError</code> siempre + parser error por formato</td></tr>
+      <tr><td>Excepciones propias</td><td>Built-ins para errores genéricos; propias para catching específico</td></tr>
+      <tr><td>Encadenamiento</td><td><code>raise X from e</code> siempre dentro de <code>except</code></td></tr>
+      <tr><td>Limpieza</td><td><code>with</code> si el objeto lo soporta; <code>finally</code> si no</td></tr>
+      <tr><td>Logging en except</td><td><code>logging.exception()</code> dentro; <code>logging.error()</code> fuera</td></tr>
+    </tbody>
+  </table>
+  <ul class="checklist" style="margin-top:14px;">
+    <li>¿El nivel de respuesta (print/return/exit) es proporcional a la severidad del error?</li>
+    <li>¿No hay ningún <code>except: pass</code> en el código?</li>
+    <li>¿<code>validate_env()</code> es la primera llamada en <code>main()</code>?</li>
+    <li>¿Los archivos externos capturan <code>FileNotFoundError</code> + el parser error del formato?</li>
+    <li>¿Los re-raises dentro de <code>except</code> usan <code>from e</code>?</li>
+    <li>¿Los archivos/conexiones se cierran con <code>with</code> o <code>finally</code>?</li>
+    <li>¿Se usa <code>logging.exception()</code> dentro de bloques <code>except</code>?</li>
+  </ul>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planning — Development Standards</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#e2e8f0; padding:36px 44px; line-height:1.75; }
+  h1 { font-size:1.9em; color:#60a5fa; margin-bottom:6px; }
+  .tagline { color:#94a3b8; margin-bottom:36px; font-size:0.96em; }
+  .card { background:#1e293b; border:1px solid #334155; border-radius:10px; padding:26px 30px; margin-bottom:22px; }
+  h2 { color:#93c5fd; font-size:1.05em; font-weight:700; margin-bottom:14px; letter-spacing:0.01em; }
+  h3 { color:#7dd3fc; font-size:0.93em; font-weight:600; margin:18px 0 8px; }
+  p { color:#cbd5e1; margin-bottom:10px; font-size:0.93em; }
+  ul, ol { padding-left:22px; margin:10px 0; }
+  li { color:#cbd5e1; margin-bottom:7px; font-size:0.93em; }
+  .code-block { background:#060c16; border:1px solid #1e3a5f; border-left:4px solid #3b82f6; border-radius:6px; padding:18px 20px; font-family:'Courier New',monospace; font-size:0.82em; color:#a7f3d0; white-space:pre; overflow-x:auto; margin:14px 0; line-height:1.55; }
+  code { background:rgba(96,165,250,0.12); color:#93c5fd; padding:2px 7px; border-radius:4px; font-size:0.87em; font-family:'Courier New',monospace; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.88em; }
+  th { background:#0f172a; color:#60a5fa; padding:10px 14px; text-align:left; border-bottom:2px solid #334155; font-size:0.85em; }
+  td { padding:9px 14px; border-bottom:1px solid #1e293b; color:#cbd5e1; vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  .alert { background:rgba(96,165,250,0.08); border-left:4px solid #3b82f6; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-green { background:rgba(16,185,129,0.1); border-left:4px solid #10b981; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-yellow { background:rgba(234,179,8,0.1); border-left:4px solid #eab308; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .tag { display:inline-block; background:rgba(96,165,250,0.15); color:#93c5fd; border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:4px 13px; font-size:0.79em; margin:3px 2px; }
+  .phase-num { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; background:#3b82f6; color:#fff; border-radius:50%; font-size:0.75em; font-weight:700; margin-right:8px; flex-shrink:0; }
+  .phase-row { display:flex; align-items:flex-start; margin-bottom:14px; }
+  .phase-content { flex:1; }
+  .phase-content strong { color:#93c5fd; }
+  .checklist { list-style:none; padding:0; }
+  .checklist li { padding:8px 0 8px 28px; position:relative; border-bottom:1px solid #263347; font-size:0.91em; }
+  .checklist li:last-child { border:none; }
+  .checklist li:before { content:"✓"; position:absolute; left:4px; color:#10b981; font-weight:700; }
+</style>
+</head>
+<body>
+
+<h1>📋 Planning</h1>
+<p class="tagline">Cómo estructurar un proyecto desde la idea hasta el plan aprobado, antes de escribir una sola línea de código</p>
+
+<!-- QUÉ ES -->
+<div class="card">
+  <h2>¿Qué es?</h2>
+  <p>El estándar de Planning define el proceso que Claude y el usuario siguen para estructurar cualquier proyecto nuevo. Es un protocolo de 7 fases que va desde capturar la idea inicial hasta obtener un plan completamente aprobado antes de implementar nada.</p>
+  <p>No es un documento que se llena una sola vez — es una conversación estructurada donde cada fase se confirma con el usuario antes de avanzar a la siguiente. El principio central es: <strong style="color:#93c5fd;">preguntar, no asumir.</strong></p>
+  <div class="alert">
+    Esto aplica a <em>cualquier</em> proyecto nuevo: scripts, APIs, herramientas de análisis, automatizaciones. La escala del plan se ajusta al tamaño del proyecto, pero las fases son siempre las mismas.
+  </div>
+</div>
+
+<!-- PARA QUÉ SIRVE -->
+<div class="card">
+  <h2>¿Para qué sirve?</h2>
+  <ul>
+    <li><strong style="color:#7dd3fc;">Previene el retrabajo:</strong> Los cambios de rumbo a mitad del desarrollo son costosos. Un plan aprobado elimina ambigüedades antes de que se conviertan en horas perdidas.</li>
+    <li><strong style="color:#7dd3fc;">Alinea expectativas:</strong> Tanto el usuario como Claude tienen una referencia clara de qué se va a construir, qué está fuera de alcance y cómo se mide el éxito.</li>
+    <li><strong style="color:#7dd3fc;">Fuerza claridad en los requisitos:</strong> Muchos problemas no están bien definidos al inicio. Las fases de scope y success criteria obligan a formularlos con precisión antes de implementar.</li>
+    <li><strong style="color:#7dd3fc;">Justifica las decisiones tecnológicas:</strong> La fase de Technology &amp; Approach documenta por qué se eligió cada herramienta, lo cual evita "¿por qué usaste X?" después.</li>
+    <li><strong style="color:#7dd3fc;">Crea un contrato de trabajo:</strong> El plan aprobado es el punto de referencia durante la ejecución. Si algo cambia, se actualiza el plan — no se improvisa.</li>
+  </ul>
+</div>
+
+<!-- POR QUÉ ESTE ENFOQUE -->
+<div class="card">
+  <h2>¿Por qué este enfoque?</h2>
+  <p>La mayoría de los proyectos fallidos fallan por falta de claridad en los requisitos, no por falta de código. Un desarrollador que empieza a codificar antes de entender el problema completo está optimizando la parte equivocada.</p>
+  <p>Las 7 fases están ordenadas por dependencia lógica: no puedes definir criterios de éxito sin saber el objetivo, ni elegir tecnología sin conocer las restricciones. Cada fase construye sobre la anterior.</p>
+  <p>El principio <strong style="color:#93c5fd;">"preguntar, no asumir"</strong> existe porque los supuestos silenciosos son la causa más común de implementaciones que no resuelven el problema real. Si algo es ambiguo, es mejor pausar 30 segundos para preguntar que perder 3 horas corrigiendo.</p>
+  <div class="alert-green">
+    <strong style="color:#6ee7b7;">La regla de la puerta:</strong> No se escribe ningún código hasta que el plan esté aprobado explícitamente por el usuario. Esta restricción está también en el CLAUDE.md de cada proyecto.
+  </div>
+</div>
+
+<!-- CON QUÉ -->
+<div class="card">
+  <h2>Con qué</h2>
+  <p>El proceso de planning es conversacional — no requiere herramientas externas. Se trabaja en el chat de Claude Code.</p>
+  <div>
+    <span class="tag">Claude Code (chat)</span>
+    <span class="tag">Texto plano</span>
+    <span class="tag">Template de plan (incluido abajo)</span>
+  </div>
+  <p style="margin-top:14px;">El output final es un bloque de texto estructurado con el template de resumen del plan que se presenta al usuario para aprobación.</p>
+</div>
+
+<!-- CÓMO APLICARLO -->
+<div class="card">
+  <h2>Cómo aplicarlo — Las 7 Fases</h2>
+
+  <div class="alert-yellow">
+    <strong style="color:#fcd34d;">Regla general:</strong> Cierra cada fase solo cuando su información esté completa. Si algo es ambiguo, pregunta antes de avanzar. Nunca llenes vacíos con suposiciones silenciosas.
+  </div>
+
+  <div class="phase-row" style="margin-top:18px;">
+    <span class="phase-num">1</span>
+    <div class="phase-content">
+      <strong>Captura la idea / el problema</strong>
+      <p>Escucha la idea o el problema en bruto — qué es, qué dolor resuelve, para quién. Luego <em>restate</em> en 1-2 oraciones y confirma que entendiste correctamente antes de continuar. Este paso parece trivial pero evita malentendidos de raíz.</p>
+    </div>
+  </div>
+
+  <div class="phase-row">
+    <span class="phase-num">2</span>
+    <div class="phase-content">
+      <strong>Objetivo y alcance</strong>
+      <p><strong style="color:#7dd3fc;">Objetivo:</strong> una sola oración que describe qué hará el proyecto. Sin objetivos dobles ni vagos.<br>
+      <strong style="color:#7dd3fc;">Alcance IN:</strong> qué está incluido.<br>
+      <strong style="color:#7dd3fc;">Alcance OUT:</strong> qué está explícitamente excluido (igual de importante — evita el "feature creep").<br>
+      Confirma ambos con el usuario.</p>
+    </div>
+  </div>
+
+  <div class="phase-row">
+    <span class="phase-num">3</span>
+    <div class="phase-content">
+      <strong>Restricciones y no-negociables</strong>
+      <p>Identifica: plazos/urgencia, herramientas o librerías disponibles, dependencias externas (sistemas, cuentas, datos), y requisitos duros que deben cumplirse sin excepción. Estas restricciones influyen directamente en las decisiones tecnológicas de la fase 5.</p>
+    </div>
+  </div>
+
+  <div class="phase-row">
+    <span class="phase-num">4</span>
+    <div class="phase-content">
+      <strong>Criterios de éxito</strong>
+      <p>Define qué significa "terminado" en términos medibles y verificables. Si un criterio no puede medirse ni verificarse, reformúlalo hasta que pueda. Ejemplo malo: "el sistema debe ser rápido". Ejemplo bueno: "el script procesa 10,000 registros en menos de 30 segundos".</p>
+    </div>
+  </div>
+
+  <div class="phase-row">
+    <span class="phase-num">5</span>
+    <div class="phase-content">
+      <strong>Tecnología y enfoque</strong>
+      <p>Propón el stack/librerías y <strong>justifica cada elección</strong>: por qué esta opción sobre las alternativas y cómo encaja en el stack existente. Esto es el "razonamiento por dominio" del CLAUDE.md. Luego esboza los componentes principales, el flujo de datos y la separación de responsabilidades.</p>
+    </div>
+  </div>
+
+  <div class="phase-row">
+    <span class="phase-num">6</span>
+    <div class="phase-content">
+      <strong>Desglose en fases</strong>
+      <p>Divide en 3–5 fases (ej: setup → core → testing → polish). Para cada fase: tareas concretas (no metas vagas), dependencias, esfuerzo estimado (S/M/L), y prioridad (crítica / importante / nice-to-have). Lista también los riesgos con su mitigación.</p>
+    </div>
+  </div>
+
+  <div class="phase-row">
+    <span class="phase-num">7</span>
+    <div class="phase-content">
+      <strong>Presentar y validar (la puerta)</strong>
+      <p>Presenta el resumen estructurado completo con todas sus justificaciones usando el template de abajo. <strong style="color:#f87171;">Para aquí y espera aprobación explícita</strong> antes de empezar a implementar. La implementación comienza solo cuando el usuario dice que sí.</p>
+    </div>
+  </div>
+
+  <h3>Template de resumen del plan</h3>
+  <div class="code-block">PROJECT: &lt;nombre&gt;
+IDEA / PROBLEM: &lt;qué y por qué&gt;
+OBJECTIVE: &lt;una sola oración&gt;
+SCOPE: &lt;IN: ...&gt; | &lt;OUT: ...&gt;
+CONSTRAINTS: &lt;plazo, recursos, dependencias, no-negociables&gt;
+SUCCESS CRITERIA: &lt;resultados medibles&gt;
+TECHNOLOGY: &lt;elección — justificación — alternativas descartadas&gt;
+PHASES:
+  1. &lt;fase — tareas clave&gt;
+  2. &lt;fase — tareas clave&gt;
+  3. &lt;fase — tareas clave&gt;
+RISKS: &lt;riesgo — mitigación&gt;</div>
+
+  <h3>Durante la ejecución</h3>
+  <p>Si el plan debe cambiar durante la implementación, explica el por qué, evalúa el impacto y actualiza el plan antes de continuar. Nunca se desvía del plan sin documentarlo. Los bloqueos se señalan apenas aparecen.</p>
+</div>
+
+<!-- REFERENCIA RÁPIDA -->
+<div class="card">
+  <h2>Referencia rápida</h2>
+  <table>
+    <thead>
+      <tr><th>Fase</th><th>Output esperado</th><th>Regla clave</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>1. Idea</strong></td><td>Restate confirmado</td><td>Confirmar antes de avanzar</td></tr>
+      <tr><td><strong>2. Objetivo + Scope</strong></td><td>1 oración de objetivo + listas IN/OUT</td><td>OUT es tan importante como IN</td></tr>
+      <tr><td><strong>3. Restricciones</strong></td><td>Lista de restricciones y no-negociables</td><td>Afecta las decisiones de tecnología</td></tr>
+      <tr><td><strong>4. Éxito</strong></td><td>Criterios medibles y verificables</td><td>Si no se puede medir, reformular</td></tr>
+      <tr><td><strong>5. Tecnología</strong></td><td>Stack + justificación + alternativas</td><td>Justificar siempre, no solo elegir</td></tr>
+      <tr><td><strong>6. Desglose</strong></td><td>3–5 fases con tareas y riesgos</td><td>Tareas concretas, no metas vagas</td></tr>
+      <tr><td><strong>7. Validación</strong></td><td>Plan completo presentado + aprobación</td><td>Ningún código sin aprobación</td></tr>
+    </tbody>
+  </table>
+  <ul class="checklist" style="margin-top:14px;">
+    <li>¿Pregunté en lugar de asumir en cada fase?</li>
+    <li>¿El objetivo es una sola oración clara?</li>
+    <li>¿Hay un OUT explícito en el scope?</li>
+    <li>¿Los criterios de éxito son medibles?</li>
+    <li>¿Cada decisión tecnológica está justificada?</li>
+    <li>¿El usuario aprobó el plan explícitamente antes de empezar?</li>
+  </ul>
+</div>
+
+</body>
+</html>

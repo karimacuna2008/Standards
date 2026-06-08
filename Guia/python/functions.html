@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Functions — Development Standards</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#e2e8f0; padding:36px 44px; line-height:1.75; }
+  h1 { font-size:1.9em; color:#60a5fa; margin-bottom:6px; }
+  .tagline { color:#94a3b8; margin-bottom:36px; font-size:0.96em; }
+  .card { background:#1e293b; border:1px solid #334155; border-radius:10px; padding:26px 30px; margin-bottom:22px; }
+  h2 { color:#93c5fd; font-size:1.05em; font-weight:700; margin-bottom:14px; }
+  h3 { color:#7dd3fc; font-size:0.93em; font-weight:600; margin:18px 0 8px; }
+  p { color:#cbd5e1; margin-bottom:10px; font-size:0.93em; }
+  ul, ol { padding-left:22px; margin:10px 0; }
+  li { color:#cbd5e1; margin-bottom:7px; font-size:0.93em; }
+  .code-block { background:#060c16; border:1px solid #1e3a5f; border-left:4px solid #3b82f6; border-radius:6px; padding:18px 20px; font-family:'Courier New',monospace; font-size:0.82em; color:#a7f3d0; white-space:pre; overflow-x:auto; margin:14px 0; line-height:1.55; }
+  code { background:rgba(96,165,250,0.12); color:#93c5fd; padding:2px 7px; border-radius:4px; font-size:0.87em; font-family:'Courier New',monospace; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.88em; }
+  th { background:#0f172a; color:#60a5fa; padding:10px 14px; text-align:left; border-bottom:2px solid #334155; font-size:0.85em; }
+  td { padding:9px 14px; border-bottom:1px solid #1e293b; color:#cbd5e1; vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  .alert { background:rgba(96,165,250,0.08); border-left:4px solid #3b82f6; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-green { background:rgba(16,185,129,0.1); border-left:4px solid #10b981; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-yellow { background:rgba(234,179,8,0.1); border-left:4px solid #eab308; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .tag { display:inline-block; background:rgba(96,165,250,0.15); color:#93c5fd; border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:4px 13px; font-size:0.79em; margin:3px 2px; }
+  .checklist { list-style:none; padding:0; }
+  .checklist li { padding:8px 0 8px 28px; position:relative; border-bottom:1px solid #263347; font-size:0.91em; }
+  .checklist li:last-child { border:none; }
+  .checklist li:before { content:"✓"; position:absolute; left:4px; color:#10b981; font-weight:700; }
+  .verb-tag { display:inline-block; background:rgba(52,211,153,0.15); color:#6ee7b7; border:1px solid rgba(52,211,153,0.3); border-radius:4px; padding:2px 8px; font-size:0.82em; font-family:'Courier New',monospace; margin:2px; }
+</style>
+</head>
+<body>
+
+<h1>⚙️ Python Functions</h1>
+<p class="tagline">Cómo nombrar, tipear, documentar y presentar funciones en Python</p>
+
+<!-- QUÉ ES -->
+<div class="card">
+  <h2>¿Qué es?</h2>
+  <p>El estándar de Functions define cómo Claude escribe y presenta funciones en proyectos Python: la convención de nombres, el uso de type hints, el formato de docstrings, y el proceso de explicación técnica profunda en el chat cuando presenta una función nueva.</p>
+  <p>Existe un principio fundamental en este estándar: <strong style="color:#93c5fd;">Claude pregunta antes de crear funciones auxiliares (helper functions)</strong>. No extrae código a una función separada por decisión propia — eso es decisión del usuario.</p>
+</div>
+
+<!-- PARA QUÉ SIRVE -->
+<div class="card">
+  <h2>¿Para qué sirve?</h2>
+  <ul>
+    <li><strong style="color:#7dd3fc;">Autoexplicación:</strong> Un nombre bien elegido hace que no necesites comentarios para entender qué hace la función. <code>fetch_user_by_id()</code> es completamente evidente; <code>get_data()</code> no dice nada.</li>
+    <li><strong style="color:#7dd3fc;">Detección temprana de bugs:</strong> Los type hints permiten que los IDEs y linters detecten errores de tipo antes de ejecutar el código.</li>
+    <li><strong style="color:#7dd3fc;">Documentación en el punto de uso:</strong> Los docstrings aparecen en el autocompletado del IDE — el desarrollador entiende la función sin abrir el archivo donde está definida.</li>
+    <li><strong style="color:#7dd3fc;">Comprensión profunda:</strong> El desglose técnico en el chat (parámetros, retorno, lógica interna, variables) asegura que el usuario entiende exactamente qué va a ejecutar antes de ejecutarlo.</li>
+    <li><strong style="color:#7dd3fc;">Control de refactoring:</strong> La regla de "preguntar antes de extraer helpers" previene que Claude reestructure código sin el consentimiento del usuario.</li>
+  </ul>
+</div>
+
+<!-- POR QUÉ -->
+<div class="card">
+  <h2>¿Por qué este enfoque?</h2>
+  <p><strong style="color:#93c5fd;">Verb + Noun naming:</strong> Las funciones son acciones — hacen algo. Nombrarlas como verbo+sustantivo (<code>fetch_user</code>, <code>calculate_total</code>) describe exactamente qué acción realizan sobre qué entidad. Los nombres genéricos (<code>process</code>, <code>handle</code>, <code>do_stuff</code>) son señales de que la función hace demasiadas cosas.</p>
+  <p><strong style="color:#93c5fd;">Type hints obligatorios:</strong> Python es dinámicamente tipado, pero eso no significa que el código deba ser opaco. Los type hints convierten el código en documentación ejecutable — el lector sabe qué recibe y qué devuelve sin ejecutarlo.</p>
+  <p><strong style="color:#93c5fd;">Google style docstrings:</strong> El estilo de Google es el más legible para lectura directa en el código. Es más explícito que los NumPy docstrings para proyectos no científicos y más estructurado que los docstrings de una sola línea para funciones de más de 2 parámetros.</p>
+  <p><strong style="color:#93c5fd;">Preguntar antes de extraer helpers:</strong> La extracción de código a funciones auxiliares es una decisión de diseño con implicaciones en testabilidad, legibilidad y arquitectura. No es una refactorización automática — el usuario decide si es necesaria.</p>
+</div>
+
+<!-- CON QUÉ -->
+<div class="card">
+  <h2>Con qué</h2>
+  <span class="tag">Python 3.6+</span>
+  <span class="tag">typing (Union, Optional, List...)</span>
+  <span class="tag">Google style docstrings</span>
+  <p style="margin-top:14px;">No se requieren librerías externas. El módulo <code>typing</code> de la stdlib provee los tipos necesarios. A partir de Python 3.10 se puede usar <code>X | Y</code> directamente en vez de <code>Union[X, Y]</code>.</p>
+</div>
+
+<!-- CÓMO APLICARLO -->
+<div class="card">
+  <h2>Cómo aplicarlo</h2>
+
+  <h3>1. Naming — Verbo + Sustantivo</h3>
+  <p>El nombre comunica la acción (verbo) y sobre qué (sustantivo). Cada verbo tiene un significado preciso:</p>
+  <table>
+    <thead><tr><th>Verbo</th><th>Cuándo usarlo</th><th>Alternativas</th></tr></thead>
+    <tbody>
+      <tr><td><span class="verb-tag">fetch_</span></td><td>Obtener datos de API o BD</td><td><code>load_</code> (archivos), <code>get_</code> (acceso simple)</td></tr>
+      <tr><td><span class="verb-tag">transform_</span></td><td>Cambiar forma o formato de datos</td><td><code>parse_</code> (string → estructura)</td></tr>
+      <tr><td><span class="verb-tag">validate_</span></td><td>Verificar que algo es válido</td><td><code>is_valid_</code> (si retorna bool)</td></tr>
+      <tr><td><span class="verb-tag">create_</span></td><td>Instanciar o persistir un objeto nuevo</td><td><code>build_</code> (construcción compleja)</td></tr>
+      <tr><td><span class="verb-tag">delete_</span></td><td>Eliminar de BD o persistencia</td><td><code>remove_</code> (de colecciones), <code>clean_</code> (limpieza)</td></tr>
+    </tbody>
+  </table>
+  <div class="code-block"># ✅ Nombres claros
+def fetch_user(user_id: int) -> dict: ...
+def validate_email(email: str) -> bool: ...
+def transform_orders(raw_orders: list[dict]) -> list[dict]: ...
+def create_report(data: list[dict], title: str) -> str: ...
+
+# ❌ Nombres genéricos — no dicen nada
+def process(data): ...
+def handle_stuff(x): ...
+def do_operation(input): ...</div>
+
+  <h3>2. Type Hints — requeridos (con excepciones)</h3>
+  <div class="code-block"># ✅ Obligatorio en toda función
+def fetch_user(user_id: int) -> dict:
+    """Retrieve user data from API."""
+
+def validate_email(email: str) -> bool:
+    """Check if email format is valid."""
+
+# Tipos complejos
+def process_orders(orders: list[dict], min_amount: float = 0) -> list[dict]:
+    ...
+
+# Múltiples tipos posibles
+def parse_id(value: str | int) -> int:
+    ...
+
+# Puede retornar None
+def find_user(email: str) -> dict | None:
+    ...
+
+# ✅ No necesitan type hints (triviales)
+for i in range(10):
+    x = i + 1  # obvio del contexto</div>
+
+  <h3>3. Docstrings — Google Style</h3>
+  <div class="code-block">def process_orders(orders: list[dict], min_amount: float = 0) -> list[dict]:
+    """Filter orders by minimum amount and format prices.
+
+    Args:
+        orders: List of order dicts with 'amount' and 'status' keys.
+        min_amount: Minimum order amount to include. Default: 0 (include all).
+
+    Returns:
+        List of filtered orders with 'formatted_price' field added.
+
+    Note:
+        Returns empty list if no orders meet the criteria.
+    """</div>
+  <ul>
+    <li>Primera línea: resumen en imperativo (<em>Filter</em>, no <em>Filters</em>)</li>
+    <li>Sección <strong>Args:</strong> todos los parámetros con descripción concisa</li>
+    <li>Sección <strong>Returns:</strong> qué devuelve y en qué formato</li>
+    <li>Sección <strong>Note:</strong> casos especiales, si los hay</li>
+    <li>Funciones de una sola línea obvias pueden tener solo el resumen de una línea</li>
+  </ul>
+
+  <h3>4. Desglose técnico profundo — en el chat</h3>
+  <p>Cuando Claude presenta una función nueva, la explica en el chat con este nivel de detalle (no en el docstring):</p>
+  <div class="code-block">Esta función filtra órdenes y les agrega precio formateado.
+
+Parámetros:
+- orders: Lista de dicts con claves 'amount' (float) y 'status' (str)
+- min_amount: Umbral de filtro — incluye todo si es 0 (valor por defecto)
+
+Retorna: Lista de dicts con los campos originales + nuevo campo 'formatted_price' (str)
+
+Lógica interna:
+- Itera sobre orders, filtra por amount >= min_amount
+- Crea filtered_orders como lista intermedia de almacenamiento
+- Aplica formato de moneda al amount de cada orden
+- Retorna lista vacía si no hay coincidencias (manejado con gracia)
+
+Variables creadas:
+- filtered_orders: guarda las órdenes que pasan el umbral
+- result: lista final con precios formateados</div>
+
+  <h3>5. Tamaño y parámetros</h3>
+  <p>No hay límites fijos. La guía es:</p>
+  <ul>
+    <li>Cada función hace <strong>un trabajo principal</strong> (responsabilidad única)</li>
+    <li>Si el cuerpo de la función salta entre 3+ tareas distintas, considerar dividirla</li>
+    <li>Si hay muchos parámetros y la lógica se vuelve confusa, considerar agrupar en dataclass</li>
+    <li>El tamaño correcto es "tan larga como necesite ser para ser clara"</li>
+  </ul>
+
+  <h3>6. Helpers — preguntar antes de crear</h3>
+  <div class="alert-yellow">
+    <strong style="color:#fcd34d;">Regla:</strong> Claude pregunta antes de extraer código a una función auxiliar. No lo hace automáticamente. El usuario decide basándose en: ¿se reutilizará? ¿mejora la claridad? ¿es una unidad testeable?
+  </div>
+</div>
+
+<!-- REFERENCIA RÁPIDA -->
+<div class="card">
+  <h2>Referencia rápida</h2>
+  <table>
+    <thead><tr><th>Elemento</th><th>Regla</th></tr></thead>
+    <tbody>
+      <tr><td>Naming</td><td><code>verbo_sustantivo</code> en <code>snake_case</code>, descriptivo</td></tr>
+      <tr><td>Verbo preferido para APIs/BD</td><td><code>fetch_</code></td></tr>
+      <tr><td>Verbo preferido para transformaciones</td><td><code>transform_</code> / <code>parse_</code></td></tr>
+      <tr><td>Type hints</td><td>Obligatorios en toda función (excepto loops/comprensiones triviales)</td></tr>
+      <tr><td>Múltiples tipos</td><td><code>str | int</code> (Python 3.10+) o <code>Union[str, int]</code></td></tr>
+      <tr><td>Puede ser None</td><td><code>dict | None</code> o <code>Optional[dict]</code></td></tr>
+      <tr><td>Docstrings</td><td>Google style: resumen + Args + Returns + Note</td></tr>
+      <tr><td>Desglose en chat</td><td>Parámetros + retorno + lógica + variables creadas</td></tr>
+      <tr><td>Tamaño</td><td>Un trabajo principal; dividir si salta entre 3+ tareas</td></tr>
+      <tr><td>Helper functions</td><td>Preguntar al usuario antes de extraer</td></tr>
+    </tbody>
+  </table>
+  <ul class="checklist" style="margin-top:14px;">
+    <li>¿El nombre es verbo+sustantivo en snake_case?</li>
+    <li>¿Todos los parámetros y el retorno tienen type hints?</li>
+    <li>¿El docstring tiene Args, Returns (y Note si aplica)?</li>
+    <li>¿Se explicó la función en el chat con el desglose técnico profundo?</li>
+    <li>¿La función hace un solo trabajo principal?</li>
+    <li>¿Se preguntó antes de extraer cualquier helper?</li>
+  </ul>
+</div>
+
+</body>
+</html>

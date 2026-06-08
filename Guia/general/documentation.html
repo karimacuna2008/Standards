@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation — Development Standards</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#e2e8f0; padding:36px 44px; line-height:1.75; }
+  h1 { font-size:1.9em; color:#60a5fa; margin-bottom:6px; }
+  .tagline { color:#94a3b8; margin-bottom:36px; font-size:0.96em; }
+  .card { background:#1e293b; border:1px solid #334155; border-radius:10px; padding:26px 30px; margin-bottom:22px; }
+  h2 { color:#93c5fd; font-size:1.05em; font-weight:700; margin-bottom:14px; }
+  h3 { color:#7dd3fc; font-size:0.93em; font-weight:600; margin:18px 0 8px; }
+  p { color:#cbd5e1; margin-bottom:10px; font-size:0.93em; }
+  ul, ol { padding-left:22px; margin:10px 0; }
+  li { color:#cbd5e1; margin-bottom:7px; font-size:0.93em; }
+  .code-block { background:#060c16; border:1px solid #1e3a5f; border-left:4px solid #3b82f6; border-radius:6px; padding:18px 20px; font-family:'Courier New',monospace; font-size:0.82em; color:#a7f3d0; white-space:pre; overflow-x:auto; margin:14px 0; line-height:1.55; }
+  code { background:rgba(96,165,250,0.12); color:#93c5fd; padding:2px 7px; border-radius:4px; font-size:0.87em; font-family:'Courier New',monospace; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.88em; }
+  th { background:#0f172a; color:#60a5fa; padding:10px 14px; text-align:left; border-bottom:2px solid #334155; font-size:0.85em; }
+  td { padding:9px 14px; border-bottom:1px solid #1e293b; color:#cbd5e1; vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  .alert { background:rgba(96,165,250,0.08); border-left:4px solid #3b82f6; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-green { background:rgba(16,185,129,0.1); border-left:4px solid #10b981; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-yellow { background:rgba(234,179,8,0.1); border-left:4px solid #eab308; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .tag { display:inline-block; background:rgba(96,165,250,0.15); color:#93c5fd; border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:4px 13px; font-size:0.79em; margin:3px 2px; }
+  .checklist { list-style:none; padding:0; }
+  .checklist li { padding:8px 0 8px 28px; position:relative; border-bottom:1px solid #263347; font-size:0.91em; }
+  .checklist li:last-child { border:none; }
+  .checklist li:before { content:"✓"; position:absolute; left:4px; color:#10b981; font-weight:700; }
+  .section-num { color:#60a5fa; font-weight:700; margin-right:6px; }
+  .optional { color:#475569; font-size:0.82em; margin-left:6px; font-style:italic; }
+</style>
+</head>
+<body>
+
+<h1>📚 Documentation</h1>
+<p class="tagline">Qué documentación crear, qué incluir en cada archivo y cuándo hacerlo</p>
+
+<!-- QUÉ ES -->
+<div class="card">
+  <h2>¿Qué es?</h2>
+  <p>El estándar de Documentation define qué archivos de documentación debe tener cada proyecto, qué secciones incluir en cada uno, y cuándo crearlos. Cubre tres niveles: el README en la raíz, el CHANGELOG para releases, y la carpeta <code>/docs</code> para proyectos más complejos.</p>
+  <p>Los docstrings y comentarios de código son parte de este ecosistema pero se tratan en sus propios estándares: <code>python/code-standards.md</code> y <code>python/functions.md</code>.</p>
+  <div class="alert">
+    Este estándar es <em>transversal</em> — aplica a todos los proyectos independientemente del lenguaje o tipo. El nivel de detalle se ajusta al tamaño del proyecto, pero el README siempre existe.
+  </div>
+</div>
+
+<!-- PARA QUÉ SIRVE -->
+<div class="card">
+  <h2>¿Para qué sirve?</h2>
+  <ul>
+    <li><strong style="color:#7dd3fc;">Onboarding instantáneo:</strong> Un buen README hace que alguien pueda entender, instalar y correr el proyecto sin preguntar nada. Incluyendo tú mismo después de 3 meses sin tocarlo.</li>
+    <li><strong style="color:#7dd3fc;">Trazabilidad de cambios:</strong> El CHANGELOG es el historial legible por personas de qué cambió en cada versión — más accesible que el git log.</li>
+    <li><strong style="color:#7dd3fc;">Referencia técnica:</strong> La carpeta <code>/docs</code> guarda la información que no cabe en el README: endpoints de API, arquitectura, esquemas de BD, guías de deployment.</li>
+    <li><strong style="color:#7dd3fc;">Consistencia:</strong> Cuando todos los proyectos tienen la misma estructura de documentación, navegar entre proyectos es predecible.</li>
+    <li><strong style="color:#7dd3fc;">Reduces dependencia de memoria:</strong> La documentación externaliza el conocimiento que de otro modo vive solo en la cabeza del desarrollador.</li>
+  </ul>
+</div>
+
+<!-- POR QUÉ -->
+<div class="card">
+  <h2>¿Por qué este enfoque?</h2>
+  <p>La estructura del README está ordenada por lo que un nuevo usuario necesita saber: primero entiende qué es, luego cómo instalarlo, luego cómo usarlo. Las secciones más técnicas (arquitectura, troubleshooting) van al final porque son para usuarios avanzados.</p>
+  <p>El CHANGELOG sigue el formato <strong style="color:#93c5fd;">Keep a Changelog</strong> (keepachangelog.com) porque es el estándar más adoptado. Agrupar cambios en categorías fijas (Added, Changed, Fixed, Removed) hace que el lector encuentre lo que busca sin leer todo.</p>
+  <p>La regla de "crear <code>/docs</code> solo para APIs, librerías y proyectos grandes" evita el overhead de mantener documentación que nadie leerá en proyectos pequeños. La documentación que no se actualiza es peor que no tener documentación.</p>
+</div>
+
+<!-- CON QUÉ -->
+<div class="card">
+  <h2>Con qué</h2>
+  <span class="tag">Markdown (.md)</span>
+  <span class="tag">README.md</span>
+  <span class="tag">CHANGELOG.md</span>
+  <span class="tag">/docs</span>
+  <p style="margin-top:14px;">Toda la documentación se escribe en Markdown. No se requieren herramientas externas — GitHub, GitLab y VS Code lo renderizan automáticamente.</p>
+</div>
+
+<!-- CÓMO APLICARLO -->
+<div class="card">
+  <h2>Cómo aplicarlo</h2>
+
+  <h3>1. README.md — siempre requerido</h3>
+  <p>Todo proyecto tiene un <code>README.md</code> en la raíz. Las secciones se incluyen en este orden; omitir las que no apliquen:</p>
+
+  <ol style="counter-reset: item; list-style: none; padding: 0;">
+    <li style="margin-bottom:10px;"><span class="section-num">1.</span><strong style="color:#93c5fd;">Title + description</strong> — Una línea de qué hace el proyecto, seguida de un párrafo corto sobre el problema que resuelve.</li>
+    <li style="margin-bottom:10px;"><span class="section-num">2.</span><strong style="color:#93c5fd;">Features</strong> — Lista de bullet points con las funcionalidades principales.</li>
+    <li style="margin-bottom:10px;"><span class="section-num">3.</span><strong style="color:#93c5fd;">Installation</strong> — Prerrequisitos primero (versiones de Python/Node/etc.), luego los pasos: clone → venv → install → config.</li>
+    <li style="margin-bottom:10px;"><span class="section-num">4.</span><strong style="color:#93c5fd;">Usage</strong> — Un ejemplo mínimo ejecutable. Casos de uso comunes. Invocación desde CLI si aplica.</li>
+    <li style="margin-bottom:10px;"><span class="section-num">5.</span><strong style="color:#93c5fd;">Configuration</strong> — Variables de entorno y claves de config-file. Una línea por variable: nombre y propósito.</li>
+    <li style="margin-bottom:10px;"><span class="section-num">6.</span><strong style="color:#93c5fd;">Architecture</strong><span class="optional">solo proyectos medianos/grandes</span> — Componentes, flujo de datos, decisiones de diseño clave.</li>
+    <li style="margin-bottom:10px;"><span class="section-num">7.</span><strong style="color:#93c5fd;">Testing</strong> — Cómo correr los tests, si los hay.</li>
+    <li style="margin-bottom:10px;"><span class="section-num">8.</span><strong style="color:#93c5fd;">Troubleshooting</strong> — Errores comunes como tabla Issue → Solution.</li>
+  </ol>
+
+  <h3>Skeleton de README</h3>
+  <div class="code-block"># Nombre del Proyecto
+Una línea de descripción.
+
+## Features
+- ...
+
+## Installation
+### Prerequisites
+- Python 3.10+
+
+### Steps
+```bash
+git clone https://github.com/...
+cd proyecto
+python -m venv venv
+venv\Scripts\activate  # Windows
+pip install -r requirements.txt
+cp .env.example .env   # editar con tus valores
+```
+
+## Usage
+```bash
+python main.py
+```
+
+## Configuration
+- `API_KEY` — clave para autenticación con la API externa
+- `DEBUG_MODE` — activa logs detallados (True/False)
+
+## Testing
+```bash
+pytest
+```</div>
+
+  <h3>2. CHANGELOG.md — requerido cuando hay releases</h3>
+  <p>Va en la raíz. La entrada más reciente arriba. Una entrada por release con este formato:</p>
+  <div class="code-block">## [1.2.0] - 2026-05-31
+
+### Added
+- Export to CSV with custom delimiter option
+- Progress bar for long-running operations
+
+### Changed
+- Improved error messages in API client (now include endpoint and status code)
+
+### Fixed
+- Null pointer when API returns empty response on /users endpoint
+
+### Removed
+- Deprecated `--legacy` flag (removed after 6-month deprecation period)
+
+---
+
+## [1.1.1] - 2026-05-15
+
+### Fixed
+- Timeout not applying to retry attempts in fetch_with_retry()</div>
+
+  <p>Las categorías disponibles son: <code>Added</code>, <code>Changed</code>, <code>Fixed</code>, <code>Removed</code>, <code>Deprecated</code>. Omite las que no aplican en esa release. El lenguaje es orientado al usuario, no a la implementación.</p>
+
+  <h3>3. Carpeta /docs — solo cuando aplica</h3>
+  <div class="alert-yellow">
+    <strong style="color:#fcd34d;">Cuándo crear /docs:</strong> APIs, librerías reutilizables, y proyectos medianos/grandes con múltiples módulos. <strong>No crearla</strong> para scripts simples, utilidades pequeñas y herramientas internas de uso ocasional.
+  </div>
+  <p>Cuando <code>/docs</code> existe, los archivos típicos son:</p>
+  <table>
+    <thead><tr><th>Archivo</th><th>Contenido</th></tr></thead>
+    <tbody>
+      <tr><td><code>installation.md</code></td><td>Guía detallada de instalación (desarrollo y producción)</td></tr>
+      <tr><td><code>architecture.md</code></td><td>Componentes, diagramas, decisiones de diseño, flujo de datos</td></tr>
+      <tr><td><code>api.md</code></td><td>Referencia de endpoints: método, path, request, response, códigos de error</td></tr>
+      <tr><td><code>configuration.md</code></td><td>Todas las variables de entorno y opciones de config explicadas en detalle</td></tr>
+      <tr><td><code>deployment.md</code></td><td>Pasos para deploy en producción, variables de entorno de prod, rollback</td></tr>
+      <tr><td><code>troubleshooting.md</code></td><td>Errores conocidos, diagnóstico, soluciones probadas</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- REFERENCIA RÁPIDA -->
+<div class="card">
+  <h2>Referencia rápida</h2>
+  <table>
+    <thead><tr><th>Artefacto</th><th>¿Requerido?</th><th>Cuándo</th><th>Dónde</th></tr></thead>
+    <tbody>
+      <tr><td><code>README.md</code></td><td>✅ Siempre</td><td>Al crear el proyecto</td><td>Raíz</td></tr>
+      <tr><td><code>CHANGELOG.md</code></td><td>✅ Si hay releases</td><td>Desde el primer release</td><td>Raíz</td></tr>
+      <tr><td><code>/docs</code></td><td>⚠️ Depende</td><td>APIs, libs, proyectos grandes</td><td>Raíz</td></tr>
+      <tr><td>Docstrings / comentarios</td><td>✅ Siempre</td><td>Al escribir el código</td><td>Ver code-standards.md</td></tr>
+    </tbody>
+  </table>
+  <ul class="checklist" style="margin-top:14px;">
+    <li>¿El README tiene Title, Features, Installation y Usage como mínimo?</li>
+    <li>¿La sección Installation incluye prerrequisitos y todos los pasos?</li>
+    <li>¿La sección Usage tiene un ejemplo ejecutable real?</li>
+    <li>¿El CHANGELOG tiene una entrada por cada release?</li>
+    <li>¿Las entradas del CHANGELOG usan las categorías correctas (Added/Changed/Fixed)?</li>
+    <li>¿Existe /docs solo si el proyecto lo justifica?</li>
+  </ul>
+</div>
+
+</body>
+</html>

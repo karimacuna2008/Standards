@@ -1,0 +1,79 @@
+<h2>¿Cómo organizar la barra lateral?</h2>
+<p class="subtitle">El contenido seleccionado aparece a la derecha. Elige el estilo de sidebar que prefieres.</p>
+
+<div class="cards" style="grid-template-columns: 1fr 1fr; gap: 24px;">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #0f172a; border-radius: 8px;">
+      <div style="display:flex; height: 260px; gap: 0; border: 1px solid #334155; border-radius: 6px; overflow: hidden;">
+        <!-- Sidebar -->
+        <div style="width: 190px; min-width:190px; background: #1e293b; border-right: 1px solid #334155; padding: 12px 0;">
+          <div style="padding: 8px 14px; font-size:0.7em; color:#64748b; text-transform:uppercase; letter-spacing:0.08em;">General</div>
+          <div style="padding: 8px 14px; font-size:0.78em; color:#93c5fd; background:rgba(96,165,250,0.12); border-left: 3px solid #3b82f6;">📋 Planning</div>
+          <div style="padding: 8px 14px; font-size:0.78em; color:#cbd5e1;">🔀 Git Workflow</div>
+          <div style="padding: 8px 14px; font-size:0.78em; color:#cbd5e1;">📚 Documentation</div>
+          <div style="padding: 8px 14px; font-size:0.7em; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; margin-top:8px;">Python</div>
+          <div style="padding: 8px 14px; font-size:0.78em; color:#cbd5e1;">🐍 Code Standards</div>
+          <div style="padding: 8px 14px; font-size:0.78em; color:#cbd5e1;">⚙️ Functions</div>
+          <div style="padding: 8px 14px; font-size:0.78em; color:#cbd5e1;">🌐 API Client</div>
+          <div style="padding: 8px 14px; font-size:0.7em; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; margin-top:8px;">Templates</div>
+          <div style="padding: 8px 14px; font-size:0.78em; color:#cbd5e1;">📄 CLAUDE.md</div>
+        </div>
+        <!-- Content area -->
+        <div style="flex:1; background:#0f172a; padding: 16px;">
+          <div style="font-size:0.75em; color:#93c5fd; font-weight:700; margin-bottom:8px;">📋 Planning</div>
+          <div style="height: 8px; background:#1e293b; border-radius:4px; margin-bottom:6px;"></div>
+          <div style="height: 8px; background:#1e293b; border-radius:4px; width:80%; margin-bottom:6px;"></div>
+          <div style="height: 8px; background:#1e293b; border-radius:4px; width:60%; margin-bottom:14px;"></div>
+          <div style="height: 8px; background:#1e293b; border-radius:4px; margin-bottom:6px;"></div>
+          <div style="height: 8px; background:#1e293b; border-radius:4px; width:75%;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Grupos con etiqueta</h3>
+      <p>La sidebar muestra etiquetas de categoría (General / Python / Templates) y los items debajo de cada una. Compacto y fácil de escanear.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #0f172a; border-radius: 8px;">
+      <div style="display:flex; height: 260px; gap: 0; border: 1px solid #334155; border-radius: 6px; overflow: hidden;">
+        <!-- Sidebar accordion -->
+        <div style="width: 190px; min-width:190px; background: #1e293b; border-right: 1px solid #334155; padding: 8px 0;">
+          <!-- Group General (expandido) -->
+          <div style="padding: 10px 14px; font-size:0.82em; color:#60a5fa; font-weight:600; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+            <span>⚙️ General</span><span style="font-size:0.7em;">▼</span>
+          </div>
+          <div style="padding: 4px 0; background:rgba(15,23,42,0.4);">
+            <div style="padding: 7px 24px; font-size:0.75em; color:#93c5fd; background:rgba(96,165,250,0.12); border-left: 3px solid #3b82f6;">📋 Planning</div>
+            <div style="padding: 7px 24px; font-size:0.75em; color:#94a3b8;">🔀 Git Workflow</div>
+            <div style="padding: 7px 24px; font-size:0.75em; color:#94a3b8;">📚 Documentation</div>
+          </div>
+          <!-- Group Python (colapsado) -->
+          <div style="padding: 10px 14px; font-size:0.82em; color:#94a3b8; font-weight:600; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+            <span>🐍 Python</span><span style="font-size:0.7em;">▶</span>
+          </div>
+          <!-- Group Templates (colapsado) -->
+          <div style="padding: 10px 14px; font-size:0.82em; color:#94a3b8; font-weight:600; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+            <span>📄 Templates</span><span style="font-size:0.7em;">▶</span>
+          </div>
+        </div>
+        <!-- Content area -->
+        <div style="flex:1; background:#0f172a; padding: 16px;">
+          <div style="font-size:0.75em; color:#93c5fd; font-weight:700; margin-bottom:8px;">📋 Planning</div>
+          <div style="height: 8px; background:#1e293b; border-radius:4px; margin-bottom:6px;"></div>
+          <div style="height: 8px; background:#1e293b; border-radius:4px; width:80%; margin-bottom:6px;"></div>
+          <div style="height: 8px; background:#1e293b; border-radius:4px; width:60%; margin-bottom:14px;"></div>
+          <div style="height: 8px; background:#1e293b; border-radius:4px; margin-bottom:6px;"></div>
+          <div style="height: 8px; background:#1e293b; border-radius:4px; width:75%;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Acordeón colapsable</h3>
+      <p>Cada grupo (General, Python, Templates) se expande/colapsa al hacer clic. Útil cuando hay muchos estándares. Más interactivo.</p>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia — Development Standards</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; overflow:hidden; font-family:'Segoe UI',sans-serif; background:#0f172a; color:#e2e8f0; }
+
+  .top-bar {
+    height: 48px;
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    flex-shrink: 0;
+  }
+  .top-bar span {
+    font-size: 1em;
+    font-weight: 700;
+    color: #60a5fa;
+    letter-spacing: 0.02em;
+  }
+  .top-bar .version {
+    margin-left: 12px;
+    font-size: 0.75em;
+    color: #475569;
+    font-weight: 400;
+  }
+
+  .app {
+    display: flex;
+    height: calc(100% - 48px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 224px;
+    min-width: 224px;
+    background: #1e293b;
+    border-right: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #334155 transparent;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+
+  .group-header {
+    padding: 12px 16px;
+    font-size: 0.82em;
+    font-weight: 700;
+    color: #60a5fa;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    transition: background 0.15s;
+    border-top: 1px solid #263347;
+  }
+  .group-header:first-child { border-top: none; }
+  .group-header:hover { background: rgba(96,165,250,0.06); }
+  .group-header .arrow {
+    font-size: 0.65em;
+    color: #475569;
+    transition: transform 0.2s ease;
+  }
+  .group-header.collapsed .arrow { transform: rotate(-90deg); }
+
+  .group-items { overflow: hidden; }
+  .group-items.collapsed { display: none; }
+
+  .nav-item {
+    padding: 9px 14px 9px 26px;
+    font-size: 0.81em;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nav-item:hover { color: #e2e8f0; background: rgba(255,255,255,0.04); }
+  .nav-item.active {
+    color: #93c5fd;
+    background: rgba(96,165,250,0.1);
+    border-left-color: #3b82f6;
+    font-weight: 600;
+  }
+
+  /* ── TEMPLATE COPY ROW ── */
+  .template-row {
+    padding: 9px 14px 9px 26px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-left: 3px solid transparent;
+  }
+  .template-label {
+    font-size: 0.81em;
+    color: #94a3b8;
+    white-space: nowrap;
+  }
+  .template-btns {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .copy-btn {
+    padding: 3px 9px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.74em;
+    font-weight: 700;
+    font-family: 'Segoe UI', sans-serif;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .copy-btn-en { background: #3b82f6; color: #fff; }
+  .copy-btn-en:hover { background: #2563eb; }
+  .copy-btn-es { background: #10b981; color: #fff; }
+  .copy-btn-es:hover { background: #059669; }
+  .copy-btn.done { background: #334155 !important; color: #64748b !important; }
+
+  /* ── CONTENT ── */
+  .content {
+    flex: 1;
+    overflow: hidden;
+    background: #0f172a;
+  }
+  .content iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <span>📖 Guia — Development Standards</span>
+  <span class="version">v1.0</span>
+</div>
+
+<div class="app">
+
+  <div class="sidebar" id="sidebar">
+
+    <div class="group-header" onclick="toggleGroup(this)">
+      <span>⚙️ General</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="group-items" id="group-general">
+      <div class="nav-item active" onclick="loadPage(this, 'general/planning.html')">📋 Planning</div>
+      <div class="nav-item" onclick="loadPage(this, 'general/git-workflow.html')">🔀 Git Workflow</div>
+      <div class="nav-item" onclick="loadPage(this, 'general/documentation.html')">📚 Documentation</div>
+    </div>
+
+    <div class="group-header" onclick="toggleGroup(this)">
+      <span>🐍 Python</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="group-items" id="group-python">
+      <div class="nav-item" onclick="loadPage(this, 'python/code-standards.html')">🎨 Code Standards</div>
+      <div class="nav-item" onclick="loadPage(this, 'python/functions.html')">⚙️ Functions</div>
+      <div class="nav-item" onclick="loadPage(this, 'python/api-client.html')">🌐 API Client</div>
+      <div class="nav-item" onclick="loadPage(this, 'python/automation.html')">🤖 Automation</div>
+      <div class="nav-item" onclick="loadPage(this, 'python/error-handling.html')">🛡️ Error Handling</div>
+    </div>
+
+    <div class="group-header" onclick="toggleGroup(this)">
+      <span>📄 Templates</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="group-items" id="group-templates">
+      <div class="template-row">
+        <span class="template-label">📄 CLAUDE.md</span>
+        <div class="template-btns">
+          <button class="copy-btn copy-btn-en" id="btnEN" onclick="copyClaude('en')">EN</button>
+          <button class="copy-btn copy-btn-es" id="btnES" onclick="copyClaude('es')">ES</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="content">
+    <iframe id="contentFrame" src="general/planning.html" title="Contenido"></iframe>
+  </div>
+
+</div>
+
+<script>
+  var TEMPLATE_EN = `# CLAUDE.md
+
+---
+
+## \u{1F4CB} STANDARDS
+
+> FIRST SESSION: Check if the folder at \`Local\` exists.
+> - If it exists: delete this block and use that path directly.
+> - If it doesn't exist: ask the user: "Should I download the standards from GitHub and
+>   save them locally, or always read them from GitHub?"
+>   - If they choose local: clone the repo, save it to the user's Desktop, update the
+>     \`Local\` path here and delete this block.
+>   - If they choose GitHub: delete the \`Local\` line and delete this block. Always keep
+>     the GitHub line.
+>
+> Once the Standards path is resolved, you MUST tell the user to run the following
+> command and wait for their confirmation before proceeding with any other task:
+>   git update-index --skip-worktree CLAUDE.md
+> Do not continue until the user confirms it was executed.
+
+Local: C:\\Users\\Karim Acuna\\OneDrive\\Desktop\\Programs\\CLAUDE\\Standards
+GitHub: https://github.com/karimacuna2008/Code-Standards.git
+
+### How to use Standards:
+- If working with **Python** → read \`python/INDEX.md\` inside the Standards folder
+- If working with **Planning/Git/Docs** → read \`general/INDEX.md\` inside the Standards folder
+- Each \`INDEX.md\` contains the list of available files and when to use each one
+
+---
+
+## \u{1F512} 1. MANDATORY VALIDATION GATE
+
+After presenting the plan and justifications, you must stop and ask for validation for each specific change. **You are not authorized to execute, write, or save any code until the user explicitly confirms each step.**
+
+NEVER modify anything without explicit approval. Always ask: "Do you approve this change? Yes/No" before proceeding.
+
+The language depends on the one used in the session.
+
+---
+
+## \u{1F4DD} 2. CHANGE MANAGEMENT & JUSTIFICATION
+
+You are prohibited from executing changes or writing final code until the following justification process is complete:
+
+### Plan-First Rule
+Provide a structured summary of all proposed changes first.
+
+### Domain-Specific Reasoning
+- **Data Science & AI/ML:** Explain the methodology. Justify why this specific model/approach was chosen over alternatives and why it fits this specific use case.
+- **Tech & Libraries:** Identify all libraries/technologies to be used. Justify their necessity and how they integrate into the existing stack.
+
+### Deep Technical Breakdown (Scripts & Functions)
+For every function or method (native or library-based), detail:
+- **Functionality:** Internal logic and purpose.
+- **Parameters:** Breakdown of arguments and what they control.
+- **Return Values:** What it outputs and its impact on the subsequent flow.
+- **Variables:** Breakdown of variables used and those that will be created.
+
+---
+
+## ✅ ABOUT THIS PROJECT
+
+[Add project-specific context here]
+
+---
+
+**Last Updated:** 2026-06-08
+**Standards Version:** v1.0`;
+
+  var TEMPLATE_ES = `# CLAUDE.md
+
+---
+
+## \u{1F4CB} ESTÁNDARES
+
+> PRIMERA SESIÓN: Verifica si la carpeta en \`Local\` existe.
+> - Si existe: elimina este bloque y usa esa ruta directamente.
+> - Si no existe: pregunta al usuario: "¿Descargo los estándares de GitHub y los guardo
+>   localmente, o los leeré siempre desde GitHub?"
+>   - Si elige local: clona el repo, guárdalo en el escritorio del usuario, actualiza
+>     la ruta \`Local\` aquí y elimina este bloque.
+>   - Si elige GitHub: elimina la línea \`Local\` y elimina este bloque. Conserva siempre
+>     la línea GitHub.
+>
+> Una vez resuelta la ruta de Standards, DEBES indicarle al usuario que ejecute el
+> siguiente comando y esperar su confirmación antes de continuar con cualquier otra tarea:
+>   git update-index --skip-worktree CLAUDE.md
+> No continúes hasta que el usuario confirme que fue ejecutado.
+
+Local: C:\\Users\\Karim Acuna\\OneDrive\\Desktop\\Programs\\CLAUDE\\Standards
+GitHub: https://github.com/karimacuna2008/Code-Standards.git
+
+### Cómo usar los Estándares:
+- Si trabajas con **Python** → lee \`python/INDEX.md\` dentro de la carpeta Standards
+- Si trabajas con **Planeación/Git/Documentación** → lee \`general/INDEX.md\` dentro de la carpeta Standards
+- Cada \`INDEX.md\` contiene la lista de archivos disponibles y cuándo usar cada uno
+
+---
+
+## \u{1F512} 1. PUERTA DE VALIDACIÓN OBLIGATORIA
+
+Después de presentar el plan y las justificaciones, debes detenerte y pedir validación para cada cambio específico. **No estás autorizado a ejecutar, escribir o guardar ningún código hasta que el usuario confirme explícitamente cada paso.**
+
+NUNCA modifiques nada sin aprobación explícita. Siempre pregunta: "¿Apruebas este cambio? Sí/No" antes de continuar.
+
+El idioma depende del que se utilice en la sesión.
+
+---
+
+## \u{1F4DD} 2. GESTIÓN DE CAMBIOS Y JUSTIFICACIÓN
+
+Tienes prohibido ejecutar cambios o escribir código final hasta que se complete el siguiente proceso de justificación:
+
+### Regla "Plan Primero"
+Proporciona primero un resumen estructurado de todos los cambios propuestos.
+
+### Razonamiento por Dominio
+- **Ciencia de Datos e IA/ML:** Explica la metodología. Justifica por qué se eligió este modelo/enfoque específico sobre las alternativas y por qué se adapta a este caso de uso específico.
+- **Tecnología y Librerías:** Identifica todas las librerías/tecnologías a utilizar. Justifica su necesidad y cómo se integran en el stack existente.
+
+### Desglose Técnico Profundo (Scripts y Funciones)
+Para cada función o método (nativo o de librería), detalla:
+- **Funcionalidad:** Lógica interna y propósito.
+- **Parámetros:** Desglose de los argumentos y qué controlan.
+- **Valores de Retorno:** Qué devuelve y su impacto en el flujo posterior.
+- **Variables:** Desglose de las variables utilizadas y las que se crearán.
+
+---
+
+## ✅ ACERCA DE ESTE PROYECTO
+
+[Agrega contexto específico del proyecto aquí]
+
+---
+
+**Última Actualización:** 2026-06-08
+**Versión de Estándares:** v1.0`;
+
+  function copyClaude(lang) {
+    var content = lang === 'en' ? TEMPLATE_EN : TEMPLATE_ES;
+    var btnId = lang === 'en' ? 'btnEN' : 'btnES';
+    var btn = document.getElementById(btnId);
+    var original = btn.textContent;
+    navigator.clipboard.writeText(content).then(function() {
+      btn.textContent = '✓';
+      btn.classList.add('done');
+      setTimeout(function() { btn.textContent = original; btn.classList.remove('done'); }, 2000);
+    });
+  }
+
+  function toggleGroup(header) {
+    header.classList.toggle('collapsed');
+    var items = header.nextElementSibling;
+    items.classList.toggle('collapsed');
+  }
+
+  function loadPage(item, path) {
+    document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+    item.classList.add('active');
+    document.getElementById('contentFrame').src = path;
+  }
+</script>
+</body>
+</html>

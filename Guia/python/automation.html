@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Automation — Development Standards</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#e2e8f0; padding:36px 44px; line-height:1.75; }
+  h1 { font-size:1.9em; color:#60a5fa; margin-bottom:6px; }
+  .tagline { color:#94a3b8; margin-bottom:36px; font-size:0.96em; }
+  .card { background:#1e293b; border:1px solid #334155; border-radius:10px; padding:26px 30px; margin-bottom:22px; }
+  h2 { color:#93c5fd; font-size:1.05em; font-weight:700; margin-bottom:14px; }
+  h3 { color:#7dd3fc; font-size:0.93em; font-weight:600; margin:18px 0 8px; }
+  p { color:#cbd5e1; margin-bottom:10px; font-size:0.93em; }
+  ul, ol { padding-left:22px; margin:10px 0; }
+  li { color:#cbd5e1; margin-bottom:7px; font-size:0.93em; }
+  .code-block { background:#060c16; border:1px solid #1e3a5f; border-left:4px solid #3b82f6; border-radius:6px; padding:18px 20px; font-family:'Courier New',monospace; font-size:0.82em; color:#a7f3d0; white-space:pre; overflow-x:auto; margin:14px 0; line-height:1.55; }
+  code { background:rgba(96,165,250,0.12); color:#93c5fd; padding:2px 7px; border-radius:4px; font-size:0.87em; font-family:'Courier New',monospace; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.88em; }
+  th { background:#0f172a; color:#60a5fa; padding:10px 14px; text-align:left; border-bottom:2px solid #334155; font-size:0.85em; }
+  td { padding:9px 14px; border-bottom:1px solid #1e293b; color:#cbd5e1; vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  .alert { background:rgba(96,165,250,0.08); border-left:4px solid #3b82f6; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-green { background:rgba(16,185,129,0.1); border-left:4px solid #10b981; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-yellow { background:rgba(234,179,8,0.1); border-left:4px solid #eab308; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .tag { display:inline-block; background:rgba(96,165,250,0.15); color:#93c5fd; border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:4px 13px; font-size:0.79em; margin:3px 2px; }
+  .checklist { list-style:none; padding:0; }
+  .checklist li { padding:8px 0 8px 28px; position:relative; border-bottom:1px solid #263347; font-size:0.91em; }
+  .checklist li:last-child { border:none; }
+  .checklist li:before { content:"✓"; position:absolute; left:4px; color:#10b981; font-weight:700; }
+  .output-sym { font-family:'Courier New',monospace; font-size:0.9em; }
+  .sym-ok { color:#6ee7b7; }
+  .sym-err { color:#fca5a5; }
+  .sym-warn { color:#fcd34d; }
+  .sym-prog { color:#93c5fd; }
+</style>
+</head>
+<body>
+
+<h1>🤖 Python Automation</h1>
+<p class="tagline">Cómo escribir scripts CLI y herramientas de automatización en Python: menús, argparse, output y control de flujo</p>
+
+<!-- QUÉ ES -->
+<div class="card">
+  <h2>¿Qué es?</h2>
+  <p>El estándar de Automation define cómo estructurar scripts de Python que interactúan con el usuario o que se ejecutan automáticamente desde pipelines. Cubre la decisión entre menú interactivo y argparse, la estructura obligatoria de <code>main()</code>, el patrón de action dict para dispatch, las convenciones de output en consola, el control de cuándo usar <code>sys.exit()</code> vs <code>return</code>, la validación de inputs y el feedback de progreso en operaciones largas.</p>
+</div>
+
+<!-- PARA QUÉ SIRVE -->
+<div class="card">
+  <h2>¿Para qué sirve?</h2>
+  <ul>
+    <li><strong style="color:#7dd3fc;">Consistencia de output:</strong> Los mismos símbolos (<code>✓</code>, <code>✗</code>, <code>⚠️</code>, <code>→</code>) en todos los scripts hacen que el usuario sepa qué tipo de mensaje es sin leerlo completo.</li>
+    <li><strong style="color:#7dd3fc;">Scripts seguros de importar:</strong> El patrón <code>main()</code> + <code>if __name__ == '__main__'</code> garantiza que ejecutar código no pase al importar el módulo desde otro script.</li>
+    <li><strong style="color:#7dd3fc;">Extensibilidad predecible:</strong> El action dict hace que agregar una opción al menú sea solo añadir una línea — no modificar una cadena de if/elif cada vez.</li>
+    <li><strong style="color:#7dd3fc;">Resiliencia en menús:</strong> La distinción <code>sys.exit()</code> vs <code>return</code> garantiza que un error en una acción del menú no mata todo el script — el usuario puede seguir usándolo.</li>
+    <li><strong style="color:#7dd3fc;">Trazabilidad en operaciones largas:</strong> El feedback de progreso hace que el usuario no asuma que el script se colgó cuando está procesando.</li>
+  </ul>
+</div>
+
+<!-- POR QUÉ -->
+<div class="card">
+  <h2>¿Por qué este enfoque?</h2>
+  <p><strong style="color:#93c5fd;">Menú vs argparse — decidir desde el inicio:</strong> Convertir un script de menú interactivo a argparse después de que está hecho es costoso. La decisión debe tomarse al principio basándose en si el script se ejecutará manualmente o automatizadamente.</p>
+  <p><strong style="color:#93c5fd;">Action dict en vez de if/elif:</strong> Una cadena larga de <code>if/elif</code> para dispatch de menú es el anti-patrón más común en scripts de automatización. Con un diccionario, la lógica de dispatch desaparece — el dict es el menú. Agregar una opción es agregar una entrada al dict, no insertar código en el medio de una cadena condicional.</p>
+  <p><strong style="color:#93c5fd;">sys.exit(1) vs return:</strong> <code>sys.exit(1)</code> dentro de una acción de menú es destructivo — mata todo el proceso y el usuario pierde el contexto de la sesión. <code>return</code> dentro de una función de menú simplemente regresa al menú — el usuario puede intentar otra opción. La excepción son los errores en la inicialización: si faltan variables de entorno o no hay conexión a la BD, no tiene sentido continuar.</p>
+  <p><strong style="color:#93c5fd;">Símbolos de output estandarizados:</strong> En una pantalla llena de texto, los símbolos permiten escanear visualmente sin leer. <code>✓</code> = OK, <code>✗</code> = error, <code>⚠️</code> = advertencia, <code>→</code> = en progreso. Cuando todos los scripts los usan igual, el ojo los reconoce automáticamente.</p>
+</div>
+
+<!-- CON QUÉ -->
+<div class="card">
+  <h2>Con qué</h2>
+  <span class="tag">argparse (stdlib)</span>
+  <span class="tag">sys (stdlib)</span>
+  <span class="tag">os (stdlib)</span>
+  <span class="tag">input() (builtin)</span>
+  <p style="margin-top:14px;">Todo de la stdlib de Python. No se requieren librerías externas para la mayoría de los scripts de automatización.</p>
+</div>
+
+<!-- CÓMO APLICARLO -->
+<div class="card">
+  <h2>Cómo aplicarlo</h2>
+
+  <h3>1. Menú interactivo vs Argparse</h3>
+  <table>
+    <thead><tr><th>Situación</th><th>Usar</th></tr></thead>
+    <tbody>
+      <tr><td>El usuario corre el script manualmente, paso a paso</td><td>Menú interactivo</td></tr>
+      <tr><td>El script corre desde CI, cron, o una pipeline</td><td><code>argparse</code></td></tr>
+      <tr><td>Se encadena con otros scripts o toma parámetros variables</td><td><code>argparse</code></td></tr>
+      <tr><td>Herramienta interna de uso ocasional, múltiples pasos</td><td>Menú interactivo</td></tr>
+    </tbody>
+  </table>
+  <div class="alert-yellow">
+    Si el script alguna vez se automatizará, usar argparse desde el inicio — es mucho más difícil agregar un menú después que al revés.
+  </div>
+  <div class="code-block"># Argparse
+import argparse
+
+parser = argparse.ArgumentParser(description='Process data files')
+parser.add_argument('--input', required=True, help='Input CSV file')
+parser.add_argument('--output', required=True, help='Output file')
+parser.add_argument('--verbose', action='store_true')
+args = parser.parse_args()</div>
+
+  <h3>2. main() + if __name__ == '__main__' — obligatorio</h3>
+  <div class="code-block"># ✅ Todo el código ejecutable dentro de main()
+def show_menu():
+    print("\n=== Data Tool ===")
+    print("  1. Import data")
+    print("  2. Process records")
+    print("  0. Exit")
+
+def process_data():
+    pass
+
+def main():
+    validate_env()
+    while True:
+        show_menu()
+        choice = input("\nOption: ").strip()
+        if choice == '0':
+            break
+
+if __name__ == '__main__':
+    main()
+
+
+# ❌ Código suelto a nivel de módulo — se ejecuta al importar
+validate_env()   # se ejecuta al importar
+show_menu()      # se ejecuta al importar</div>
+  <p>Las únicas cosas al nivel del módulo deben ser: imports, constantes, y definiciones de funciones/clases.</p>
+
+  <h3>3. Action Dict — dispatch de menú</h3>
+  <div class="code-block"># ❌ if/elif — crece sin control
+def handle_choice(choice: str) -> None:
+    if choice == '1':
+        import_data()
+    elif choice == '2':
+        process_records()
+    elif choice == '3':
+        export_results()
+
+
+# ✅ Action dict — agregar una opción = agregar una línea
+def main():
+    actions = {
+        '1': import_data,
+        '2': process_records,
+        '3': export_results,
+        '4': show_stats,
+    }
+
+    while True:
+        show_menu()
+        choice = input("\nOption: ").strip()
+
+        if choice == '0':
+            break
+
+        if choice in actions:
+            actions[choice]()
+        else:
+            print("  ✗ Invalid option")
+
+# Con parámetros fijos — usar lambda
+actions = {
+    '1': lambda: import_data(source='csv'),
+    '2': lambda: process_records(verbose=True),
+}</div>
+
+  <h3>4. Convenciones de output</h3>
+  <div class="code-block"># Símbolos estándar
+print("  ✓ Users imported successfully")   # operación exitosa
+print("  ✗ File not found: data.csv")      # error, operación fallida
+print("  ⚠️ No records found — skipping")  # advertencia, continúa
+print("  → Processing 150 records...")     # operación en progreso
+
+# Indentación
+print("\n=== Export Results ===")           # título: sin indentación, línea en blanco antes
+print("  → Exporting to results.csv...")   # acción principal: 2 espacios
+print("  ✓ 342 records exported")          # resultado: 2 espacios
+print("    - Skipped: 5 duplicates")       # detalle/sub-item: 4 espacios
+print("    - Errors: 0")
+
+# Tablas con alineación
+print(f"  {'Name':<20} {'Status':<10} {'Records':>8}")
+print(f"  {'-'*20} {'-'*10} {'-'*8}")
+for item in results:
+    print(f"  {item['name']:<20} {item['status']:<10} {item['count']:>8}")</div>
+
+  <h3>5. sys.exit(1) vs return</h3>
+  <table>
+    <thead><tr><th>Situación</th><th>Usar</th></tr></thead>
+    <tbody>
+      <tr><td>Variable de entorno faltante al inicio</td><td><code>sys.exit(1)</code></td></tr>
+      <tr><td>Conexión a BD/API falla al inicio</td><td><code>sys.exit(1)</code></td></tr>
+      <tr><td>Una acción del menú falla</td><td><code>return</code> (vuelve al menú)</td></tr>
+      <tr><td>El usuario elige salir</td><td><code>break</code> en el loop</td></tr>
+      <tr><td>Error irrecuperable en mitad de ejecución</td><td><code>sys.exit(1)</code> con mensaje claro</td></tr>
+    </tbody>
+  </table>
+  <div class="code-block"># ✅ sys.exit(1) en inicialización
+def main():
+    validate_env()     # sys.exit(1) si faltan variables
+    connect_to_db()    # sys.exit(1) si no hay conexión
+
+# ✅ return en acciones del menú
+def import_data() -> None:
+    if not os.path.exists('data.csv'):
+        print("  ✗ data.csv not found")
+        return  # vuelve al menú, el usuario puede intentar otra cosa
+
+# ❌ sys.exit(1) dentro de una acción — mata todo el script
+def import_data() -> None:
+    if not os.path.exists('data.csv'):
+        sys.exit(1)  # el usuario pierde toda la sesión</div>
+
+  <h3>6. Validación de input de usuario</h3>
+  <div class="code-block">def get_menu_choice(valid_options: list[str]) -> str:
+    while True:
+        choice = input("\nOption: ").strip()
+        if choice in valid_options:
+            return choice
+        print(f"  ✗ Invalid option. Choose from: {', '.join(valid_options)}")
+
+def get_int_input(prompt: str, min_val: int, max_val: int) -> int:
+    while True:
+        raw = input(prompt).strip()
+        try:
+            value = int(raw)
+            if min_val <= value <= max_val:
+                return value
+            print(f"  ✗ Enter a number between {min_val} and {max_val}")
+        except ValueError:
+            print("  ✗ Invalid input — enter a number")
+
+def confirm(prompt: str) -> bool:
+    while True:
+        answer = input(f"{prompt} (y/n): ").strip().lower()
+        if answer in ('y', 'yes'): return True
+        if answer in ('n', 'no'): return False
+        print("  ✗ Enter 'y' or 'n'")</div>
+  <p>Siempre <code>while True</code> hasta que el input sea válido. Siempre <code>.strip()</code> para eliminar espacios accidentales. Funciones reutilizables — no validar inline en cada lugar.</p>
+
+  <h3>7. Feedback de progreso</h3>
+  <div class="code-block">def process_records(records: list[dict]) -> None:
+    total = len(records)
+    print(f"  → Processing {total} records...")  # siempre mostrar el total antes
+
+    for i, record in enumerate(records, 1):
+        process_single(record)
+        if i % 50 == 0 or i == total:  # actualizar cada 50 items o al final
+            print(f"  → {i}/{total} processed")
+
+    print(f"  ✓ Done — {total} records processed")  # siempre mensaje de cierre
+
+# Para operaciones muy largas — sobreescribir la misma línea
+def download_files(files: list[str]) -> None:
+    total = len(files)
+    for i, file in enumerate(files, 1):
+        download(file)
+        print(f"  → Downloading... {i}/{total}", end='\r')
+    print(f"  ✓ {total} files downloaded        ")  # espacios limpian el \r</div>
+</div>
+
+<!-- REFERENCIA RÁPIDA -->
+<div class="card">
+  <h2>Referencia rápida</h2>
+  <table>
+    <thead><tr><th>Regla</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td>Menú vs argparse</td><td>Menú para uso manual; argparse para CI/pipelines/encadenamiento</td></tr>
+      <tr><td><code>main()</code></td><td>Todo el código ejecutable dentro; nunca suelto en el módulo</td></tr>
+      <tr><td>Dispatch de menú</td><td>Action dict <code>{'1': func}</code>; opción de salida fuera del dict</td></tr>
+      <tr><td>Output</td><td><code class="output-sym"><span class="sym-ok">✓</span> <span class="sym-err">✗</span> <span class="sym-warn">⚠️</span> <span class="sym-prog">→</span></code>, 2 espacios base, 4 para sub-items</td></tr>
+      <tr><td><code>sys.exit</code> vs <code>return</code></td><td><code>sys.exit(1)</code> en startup/irrecuperable; <code>return</code> en acciones</td></tr>
+      <tr><td>Validación de input</td><td><code>while True</code> + <code>.strip()</code> + mensaje específico + reutilizable</td></tr>
+      <tr><td>Progreso</td><td>Total antes, actualizar cada 50 items, resumen al final</td></tr>
+    </tbody>
+  </table>
+  <ul class="checklist" style="margin-top:14px;">
+    <li>¿Todo el código ejecutable está dentro de <code>main()</code>?</li>
+    <li>¿El archivo termina con <code>if __name__ == '__main__': main()</code>?</li>
+    <li>¿El dispatch usa action dict en vez de if/elif?</li>
+    <li>¿Los mensajes usan los símbolos estándar (✓ ✗ ⚠️ →)?</li>
+    <li>¿Las acciones del menú usan <code>return</code> (no <code>sys.exit</code>)?</li>
+    <li>¿La validación de input usa <code>while True</code> + <code>.strip()</code>?</li>
+    <li>¿Las operaciones largas muestran progreso y un mensaje final?</li>
+  </ul>
+</div>
+
+</body>
+</html>

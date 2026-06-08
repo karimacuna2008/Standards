@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python API Client — Development Standards</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#e2e8f0; padding:36px 44px; line-height:1.75; }
+  h1 { font-size:1.9em; color:#60a5fa; margin-bottom:6px; }
+  .tagline { color:#94a3b8; margin-bottom:36px; font-size:0.96em; }
+  .card { background:#1e293b; border:1px solid #334155; border-radius:10px; padding:26px 30px; margin-bottom:22px; }
+  h2 { color:#93c5fd; font-size:1.05em; font-weight:700; margin-bottom:14px; }
+  h3 { color:#7dd3fc; font-size:0.93em; font-weight:600; margin:18px 0 8px; }
+  p { color:#cbd5e1; margin-bottom:10px; font-size:0.93em; }
+  ul, ol { padding-left:22px; margin:10px 0; }
+  li { color:#cbd5e1; margin-bottom:7px; font-size:0.93em; }
+  .code-block { background:#060c16; border:1px solid #1e3a5f; border-left:4px solid #3b82f6; border-radius:6px; padding:18px 20px; font-family:'Courier New',monospace; font-size:0.82em; color:#a7f3d0; white-space:pre; overflow-x:auto; margin:14px 0; line-height:1.55; }
+  code { background:rgba(96,165,250,0.12); color:#93c5fd; padding:2px 7px; border-radius:4px; font-size:0.87em; font-family:'Courier New',monospace; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.88em; }
+  th { background:#0f172a; color:#60a5fa; padding:10px 14px; text-align:left; border-bottom:2px solid #334155; font-size:0.85em; }
+  td { padding:9px 14px; border-bottom:1px solid #1e293b; color:#cbd5e1; vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  .alert { background:rgba(96,165,250,0.08); border-left:4px solid #3b82f6; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-green { background:rgba(16,185,129,0.1); border-left:4px solid #10b981; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-red { background:rgba(239,68,68,0.1); border-left:4px solid #ef4444; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-yellow { background:rgba(234,179,8,0.1); border-left:4px solid #eab308; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .tag { display:inline-block; background:rgba(96,165,250,0.15); color:#93c5fd; border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:4px 13px; font-size:0.79em; margin:3px 2px; }
+  .checklist { list-style:none; padding:0; }
+  .checklist li { padding:8px 0 8px 28px; position:relative; border-bottom:1px solid #263347; font-size:0.91em; }
+  .checklist li:last-child { border:none; }
+  .checklist li:before { content:"✓"; position:absolute; left:4px; color:#10b981; font-weight:700; }
+  .status-200 { color:#6ee7b7; font-weight:600; }
+  .status-4xx { color:#fcd34d; font-weight:600; }
+  .status-5xx { color:#fca5a5; font-weight:600; }
+</style>
+</head>
+<body>
+
+<h1>🌐 Python API Client</h1>
+<p class="tagline">Cómo consumir APIs REST externas en Python: autenticación, paginación, reintentos y manejo de errores HTTP</p>
+
+<!-- QUÉ ES -->
+<div class="card">
+  <h2>¿Qué es?</h2>
+  <p>El estándar de API Client cubre cómo escribir código Python para <strong style="color:#93c5fd;">consumir APIs externas</strong> — es decir, cuando el proyecto actúa como cliente HTTP y llama a servicios de terceros (GitHub API, Stripe, Notion, OpenAI, etc.).</p>
+  <p>Cubre 8 áreas: autenticación, instanciación del cliente, separación de fetch y transform, paginación, reintentos, manejo de errores HTTP, validación de respuestas y logging de llamadas.</p>
+  <div class="alert">
+    <strong>Scope:</strong> Este estándar es para <em>consumir</em> APIs. Exponer tus propias APIs (como servidor FastAPI) es un estándar diferente: <code>python/api-server.md</code> (pendiente).
+  </div>
+</div>
+
+<!-- PARA QUÉ SIRVE -->
+<div class="card">
+  <h2>¿Para qué sirve?</h2>
+  <ul>
+    <li><strong style="color:#7dd3fc;">Seguridad:</strong> Las credenciales nunca se hardcodean en el código — siempre desde variables de entorno.</li>
+    <li><strong style="color:#7dd3fc;">Resiliencia:</strong> Los reintentos con backoff exponencial hacen que el código sobreviva a errores temporales de red o servidores saturados.</li>
+    <li><strong style="color:#7dd3fc;">Mantenibilidad:</strong> Separar fetch de transform significa que si la API cambia su estructura, solo tocas la función de fetch. Si cambias qué campos necesitas, solo tocas la de transform.</li>
+    <li><strong style="color:#7dd3fc;">Debuggability:</strong> El logging de llamadas API hace trivial diagnosticar qué llamada falló, cuándo y con qué código de error.</li>
+    <li><strong style="color:#7dd3fc;">Completitud:</strong> La paginación automática garantiza que nunca te quedes con solo la primera página de resultados por accidente.</li>
+  </ul>
+</div>
+
+<!-- POR QUÉ -->
+<div class="card">
+  <h2>¿Por qué este enfoque?</h2>
+  <p><strong style="color:#93c5fd;">Credenciales en .env:</strong> Las API keys hardcodeadas en el código eventualmente llegan al repositorio por accidente. Con <code>.env</code> + <code>gitignore</code> es estructuralmente imposible commitearlas sin notarlo.</p>
+  <p><strong style="color:#93c5fd;">Cliente como dependencia (no global):</strong> Las variables globales hacen el código difícil de testear y de razonar. Un cliente pasado como parámetro es explícito — cualquier función que lo usa lo declara en su firma.</p>
+  <p><strong style="color:#93c5fd;">Solo reintentar 5xx y timeouts:</strong> Los errores 4xx (401, 404, 422) son problemas del lado del cliente — reintentar no cambia nada porque el servidor seguirá rechazando la misma petición. Solo tiene sentido reintentar cuando el problema es temporal en el servidor (5xx) o de red (timeout).</p>
+  <p><strong style="color:#93c5fd;">Backoff exponencial:</strong> Un reintento inmediato después de un error 503 probablemente también fallará — el servidor está sobrecargado. Esperar 2s, luego 4s, luego 8s le da tiempo al servidor para recuperarse.</p>
+  <p><strong style="color:#93c5fd;">Nunca retornar None en errores críticos:</strong> Si una función puede retornar <code>None</code> tanto cuando "no hay datos" como cuando "la llamada falló", el caller no puede distinguir los dos casos. Raise + excepción hace la diferencia explícita.</p>
+</div>
+
+<!-- CON QUÉ -->
+<div class="card">
+  <h2>Con qué</h2>
+  <span class="tag">requests</span>
+  <span class="tag">python-dotenv</span>
+  <span class="tag">.env</span>
+  <span class="tag">logging (stdlib)</span>
+  <span class="tag">time (stdlib)</span>
+  <div class="code-block">pip install requests python-dotenv</div>
+  <p>Las dos librerías externas necesarias. Todo lo demás (<code>logging</code>, <code>time</code>, <code>os</code>) es de la stdlib de Python.</p>
+</div>
+
+<!-- CÓMO APLICARLO -->
+<div class="card">
+  <h2>Cómo aplicarlo</h2>
+
+  <h3>1. Autenticación — siempre desde .env</h3>
+  <div class="code-block">import os
+from dotenv import load_dotenv
+
+# ✅ Correcto — desde .env
+load_dotenv()
+API_KEY = os.getenv('API_KEY')
+
+# ❌ Jamás hardcodeado
+API_KEY = "sk-1234abcd..."  # nunca</div>
+  <ul>
+    <li>Llamar <code>load_dotenv()</code> antes de cualquier <code>os.getenv()</code></li>
+    <li>Si la variable no existe, <code>os.getenv()</code> retorna <code>None</code> — validar antes de usar (ver Error Handling)</li>
+    <li>Nunca loguear ni imprimir la API key, ni parcialmente</li>
+  </ul>
+
+  <h3>2. Cliente como dependencia — crear una vez en main()</h3>
+  <div class="code-block"># ✅ Instanciado en main(), pasado como parámetro
+def fetch_users(client: SomeAPIClient) -> list[dict]:
+    return client.get('/users')
+
+def main():
+    client = SomeAPIClient(api_key=API_KEY)
+    users = fetch_users(client)
+
+
+# ❌ Variable global — evitar
+client = SomeAPIClient(api_key=API_KEY)  # al nivel del módulo
+
+def fetch_users() -> list[dict]:
+    return client.get('/users')  # usa el global implícitamente</div>
+
+  <h3>3. Separar Fetch de Transform</h3>
+  <div class="code-block"># ✅ Correcto — funciones separadas
+def fetch_users(client: SomeAPIClient) -> list[dict]:
+    """Llama la API y retorna datos crudos."""
+    response = client.get('/users')
+    return response['data']
+
+def transform_users(raw_users: list[dict]) -> list[dict]:
+    """Extrae solo los campos necesarios."""
+    return [
+        {'id': u['id'], 'name': u['full_name'], 'email': u['email_address']}
+        for u in raw_users
+    ]
+
+
+# ❌ Mezclados — evitar
+def get_users(client: SomeAPIClient) -> list[dict]:
+    response = client.get('/users')
+    return [{'id': u['id'], 'name': u['full_name']} for u in response['data']]</div>
+  <p>Excepción: si usas los datos tal como llegan de la API sin transformación, una sola función es suficiente.</p>
+
+  <h3>4. Paginación</h3>
+  <div class="code-block">def fetch_all_users(client: SomeAPIClient) -> list[dict]:
+    all_users = []
+    cursor = None
+
+    while True:
+        response = client.get('/users', params={'cursor': cursor, 'limit': 100})
+        all_users.extend(response['data'])
+
+        if not response['has_more']:
+            break
+
+        cursor = response['next_cursor']
+
+    return all_users</div>
+  <ul>
+    <li><code>cursor = None</code> para la primera página (la mayoría de las APIs lo ignoran)</li>
+    <li>Siempre un <code>limit</code> explícito — no confiar en el default de la API</li>
+    <li>Acumular en lista local, retornar al final (no procesar dentro del loop — eso es transform)</li>
+    <li>El nombre de campo (<code>has_more</code>, <code>next_page</code>, etc.) varía por API — adaptar el nombre, no el patrón</li>
+  </ul>
+
+  <h3>5. Reintentos con backoff exponencial</h3>
+  <div class="code-block">import time
+import logging
+
+def fetch_with_retry(client, endpoint: str, max_retries: int = 3) -> dict:
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = client.get(endpoint, timeout=10)
+
+            if response.status_code == 200:
+                return response.json()
+
+            if response.status_code >= 500:
+                logging.warning(f"Retry {attempt}/{max_retries} — status {response.status_code}")
+                time.sleep(2 ** attempt)  # backoff: 2s, 4s, 8s
+                continue
+
+            if response.status_code >= 400:
+                raise ValueError(f"Client error {response.status_code} — no retry")
+
+        except requests.exceptions.Timeout:
+            logging.warning(f"Retry {attempt}/{max_retries} — timeout")
+            time.sleep(2 ** attempt)
+
+    raise RuntimeError(f"API failed after {max_retries} retries: {endpoint}")</div>
+  <ul>
+    <li>Reintentar solo en <strong>5xx y timeouts</strong></li>
+    <li>Backoff exponencial: <code>2 ** attempt</code> segundos (2s, 4s, 8s)</li>
+    <li><code>timeout</code> siempre explícito — nunca esperar indefinidamente</li>
+    <li>Raise cuando se agotan los reintentos — no retornar <code>None</code> silenciosamente</li>
+  </ul>
+
+  <h3>6. Manejo de errores HTTP por código</h3>
+  <div class="code-block">def handle_response(response) -> dict:
+    if response.status_code == 200:
+        return response.json()
+
+    if response.status_code == 401:
+        raise PermissionError("Invalid or expired API key")
+
+    if response.status_code == 403:
+        raise PermissionError(f"Access denied: {response.url}")
+
+    if response.status_code == 404:
+        return {}  # Recurso no encontrado — retornar vacío si es opcional
+
+    if response.status_code == 429:
+        retry_after = response.headers.get('Retry-After', 60)
+        raise RuntimeError(f"Rate limit hit — retry after {retry_after}s")
+
+    if response.status_code >= 500:
+        raise RuntimeError(f"Server error {response.status_code}")</div>
+  <table>
+    <thead><tr><th>Código</th><th>Qué significa</th><th>Respuesta</th></tr></thead>
+    <tbody>
+      <tr><td><span class="status-200">200</span></td><td>Éxito</td><td>Retornar los datos</td></tr>
+      <tr><td><span class="status-4xx">401/403</span></td><td>Problema de autenticación/autorización</td><td>Raise siempre — es error de configuración</td></tr>
+      <tr><td><span class="status-4xx">404</span></td><td>Recurso no encontrado</td><td>Retornar <code>{}</code> si es opcional; raise si es requerido</td></tr>
+      <tr><td><span class="status-4xx">429</span></td><td>Rate limit alcanzado</td><td>Raise con el valor de <code>Retry-After</code></td></tr>
+      <tr><td><span class="status-5xx">5xx</span></td><td>Error del servidor</td><td>Raise (los reintentos ya se agotaron)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7. Validación de respuesta</h3>
+  <div class="code-block">def fetch_users(client) -> list[dict]:
+    response = client.get('/users')
+    data = response.json()
+
+    if 'data' not in data:
+        raise ValueError(f"Unexpected response: missing 'data' key. Got: {list(data.keys())}")
+
+    if not isinstance(data['data'], list):
+        raise ValueError(f"Expected list in 'data', got {type(data['data']).__name__}")
+
+    return data['data']</div>
+  <p>Validar las claves y tipos que el código usa directamente, antes de usarlos. El mensaje de error debe incluir qué llegó realmente — facilita el debugging.</p>
+
+  <h3>8. Logging de llamadas API</h3>
+  <div class="code-block">import logging, time
+
+def fetch_users(client) -> list[dict]:
+    logging.info("GET /users")
+    start = time.time()
+
+    response = client.get('/users', timeout=10)
+    elapsed = round(time.time() - start, 2)
+
+    if response.status_code == 200:
+        logging.info(f"GET /users — 200 OK ({elapsed}s)")
+    else:
+        logging.warning(f"GET /users — {response.status_code} ({elapsed}s)")
+
+    return response.json()</div>
+  <table>
+    <thead><tr><th>Momento</th><th>Nivel</th><th>Ejemplo</th></tr></thead>
+    <tbody>
+      <tr><td>Antes de llamar</td><td><code>INFO</code></td><td><code>"GET /users"</code></td></tr>
+      <tr><td>Respuesta exitosa</td><td><code>INFO</code></td><td><code>"GET /users — 200 OK (0.43s)"</code></td></tr>
+      <tr><td>Reintento</td><td><code>WARNING</code></td><td><code>"Retry 2/3 — status 503 (GET /users)"</code></td></tr>
+      <tr><td>Rate limit</td><td><code>WARNING</code></td><td><code>"Rate limit hit — retry after 60s"</code></td></tr>
+      <tr><td>Fallo final</td><td><code>ERROR</code></td><td><code>"API failed after 3 retries: GET /users"</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- REFERENCIA RÁPIDA -->
+<div class="card">
+  <h2>Referencia rápida</h2>
+  <table>
+    <thead><tr><th>Regla</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td>Autenticación</td><td><code>.env</code> + <code>load_dotenv()</code> — nunca hardcoded</td></tr>
+      <tr><td>Cliente</td><td>Crear en <code>main()</code>, pasar como parámetro</td></tr>
+      <tr><td>Fetch vs Transform</td><td>Funciones separadas cuando hay mapeo de campos</td></tr>
+      <tr><td>Paginación</td><td><code>while True</code> + cursor + límite explícito</td></tr>
+      <tr><td>Reintentos</td><td>Solo 5xx/timeout, backoff exponencial, timeout siempre</td></tr>
+      <tr><td>Errores HTTP</td><td>401/403 raise, 404 por contexto, 429 con Retry-After</td></tr>
+      <tr><td>Validación</td><td>Claves + tipos antes de usar, mensaje con contexto</td></tr>
+      <tr><td>Logging</td><td>INFO éxito, WARNING reintento/rate limit, ERROR fallo final</td></tr>
+    </tbody>
+  </table>
+  <ul class="checklist" style="margin-top:14px;">
+    <li>¿Las credenciales están en .env y se llama load_dotenv() al inicio?</li>
+    <li>¿El cliente se crea en main() y se pasa como parámetro?</li>
+    <li>¿Las funciones de fetch y transform están separadas?</li>
+    <li>¿La paginación usa while True + cursor + límite explícito?</li>
+    <li>¿Los reintentos tienen backoff exponencial y solo cubren 5xx/timeout?</li>
+    <li>¿Cada código HTTP tiene su respuesta correcta (raise vs return {})?</li>
+    <li>¿Se valida la estructura de la respuesta antes de usarla?</li>
+    <li>¿Se loguea antes de cada llamada y después con el código y tiempo?</li>
+  </ul>
+</div>
+
+</body>
+</html>

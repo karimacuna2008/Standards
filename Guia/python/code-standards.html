@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Code Standards — Development Standards</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',sans-serif; background:#0f172a; color:#e2e8f0; padding:36px 44px; line-height:1.75; }
+  h1 { font-size:1.9em; color:#60a5fa; margin-bottom:6px; }
+  .tagline { color:#94a3b8; margin-bottom:36px; font-size:0.96em; }
+  .card { background:#1e293b; border:1px solid #334155; border-radius:10px; padding:26px 30px; margin-bottom:22px; }
+  h2 { color:#93c5fd; font-size:1.05em; font-weight:700; margin-bottom:14px; }
+  h3 { color:#7dd3fc; font-size:0.93em; font-weight:600; margin:18px 0 8px; }
+  p { color:#cbd5e1; margin-bottom:10px; font-size:0.93em; }
+  ul, ol { padding-left:22px; margin:10px 0; }
+  li { color:#cbd5e1; margin-bottom:7px; font-size:0.93em; }
+  .code-block { background:#060c16; border:1px solid #1e3a5f; border-left:4px solid #3b82f6; border-radius:6px; padding:18px 20px; font-family:'Courier New',monospace; font-size:0.82em; color:#a7f3d0; white-space:pre; overflow-x:auto; margin:14px 0; line-height:1.55; }
+  code { background:rgba(96,165,250,0.12); color:#93c5fd; padding:2px 7px; border-radius:4px; font-size:0.87em; font-family:'Courier New',monospace; }
+  table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.88em; }
+  th { background:#0f172a; color:#60a5fa; padding:10px 14px; text-align:left; border-bottom:2px solid #334155; font-size:0.85em; }
+  td { padding:9px 14px; border-bottom:1px solid #1e293b; color:#cbd5e1; vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  .alert { background:rgba(96,165,250,0.08); border-left:4px solid #3b82f6; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-green { background:rgba(16,185,129,0.1); border-left:4px solid #10b981; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .alert-yellow { background:rgba(234,179,8,0.1); border-left:4px solid #eab308; padding:14px 18px; border-radius:6px; margin:14px 0; color:#cbd5e1; font-size:0.91em; }
+  .tag { display:inline-block; background:rgba(96,165,250,0.15); color:#93c5fd; border:1px solid rgba(96,165,250,0.3); border-radius:20px; padding:4px 13px; font-size:0.79em; margin:3px 2px; }
+  .good { color:#6ee7b7; font-weight:600; }
+  .bad { color:#fca5a5; font-weight:600; }
+  .checklist { list-style:none; padding:0; }
+  .checklist li { padding:8px 0 8px 28px; position:relative; border-bottom:1px solid #263347; font-size:0.91em; }
+  .checklist li:last-child { border:none; }
+  .checklist li:before { content:"✓"; position:absolute; left:4px; color:#10b981; font-weight:700; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:14px 0; }
+  .col { background:rgba(15,23,42,0.6); border:1px solid #334155; border-radius:8px; padding:16px; }
+  .col h4 { font-size:0.85em; font-weight:600; margin-bottom:10px; }
+</style>
+</head>
+<body>
+
+<h1>🎨 Python Code Standards</h1>
+<p class="tagline">Convenciones de estilo, estructura y organización para escribir Python consistente y legible</p>
+
+<!-- QUÉ ES -->
+<div class="card">
+  <h2>¿Qué es?</h2>
+  <p>El estándar de Code Standards define las convenciones de escritura de Python que Claude aplica en todos los proyectos: cómo nombrar variables, funciones, clases y constantes; cómo organizar los imports; qué largo máximo tienen las líneas; cuándo usar f-strings; y cómo estructurar el código según el tipo de proyecto.</p>
+  <p>La base es <strong style="color:#93c5fd;">PEP 8</strong> con una sola modificación: el límite de línea es <strong>120 caracteres</strong> en vez de 79. El resto de PEP 8 aplica sin excepciones.</p>
+</div>
+
+<!-- PARA QUÉ SIRVE -->
+<div class="card">
+  <h2>¿Para qué sirve?</h2>
+  <ul>
+    <li><strong style="color:#7dd3fc;">Legibilidad predecible:</strong> Cuando todos los proyectos siguen las mismas convenciones, cambiar de uno a otro no requiere adaptación. El código se lee, no se descifra.</li>
+    <li><strong style="color:#7dd3fc;">Reduce errores por ambigüedad:</strong> Naming conventions claras (snake_case, UPPER_CASE, PascalCase) hacen evidente qué tipo de cosa es cada identificador sin tener que leer su definición.</li>
+    <li><strong style="color:#7dd3fc;">Facilita el code review:</strong> Las convenciones comunes eliminan discusiones subjetivas de estilo — el estándar es el árbitro.</li>
+    <li><strong style="color:#7dd3fc;">Compatibilidad con herramientas:</strong> PEP 8 + f-strings + imports organizados son los patrones que los linters (flake8, pylint) y formateadores (black, ruff) esperan por defecto.</li>
+  </ul>
+</div>
+
+<!-- POR QUÉ -->
+<div class="card">
+  <h2>¿Por qué este enfoque?</h2>
+  <p><strong style="color:#93c5fd;">120 caracteres en vez de 79:</strong> El límite original de PEP 8 venía de terminales de 80 columnas de los años 70. Los monitores modernos son más anchos. 120 caracteres permite escribir código más legible sin tener que partirlo artificialmente en múltiples líneas.</p>
+  <p><strong style="color:#93c5fd;">F-strings siempre:</strong> Son la forma más clara, rápida y legible de formatear strings en Python moderno (3.6+). No hay razón para usar <code>.format()</code> o <code>%</code> en código nuevo.</p>
+  <p><strong style="color:#93c5fd;">Imports en 3 grupos:</strong> La separación stdlib → third-party → local permite ver de un vistazo qué depende de Python estándar, qué instalaste con pip, y qué es tuyo. Facilita mover el código a otro entorno.</p>
+  <p><strong style="color:#93c5fd;">config.py para constantes:</strong> Las constantes de configuración en un archivo dedicado son fáciles de encontrar, modificar y no contaminar el código de negocio con valores hardcoded.</p>
+</div>
+
+<!-- CON QUÉ -->
+<div class="card">
+  <h2>Con qué</h2>
+  <span class="tag">Python 3.6+</span>
+  <span class="tag">PEP 8</span>
+  <span class="tag">flake8 / ruff (linter opcional)</span>
+  <span class="tag">black (formatter opcional)</span>
+  <p style="margin-top:14px;">No se requiere ningún linter específico, pero estas herramientas validan automáticamente la mayoría de las reglas de este estándar si se quieren usar.</p>
+</div>
+
+<!-- CÓMO APLICARLO -->
+<div class="card">
+  <h2>Cómo aplicarlo</h2>
+
+  <h3>1. Estructura de proyecto</h3>
+  <p>La estructura depende del tipo de proyecto. Empezar simple y expandir si el proyecto crece:</p>
+
+  <div class="grid2">
+    <div class="col">
+      <h4 style="color:#7dd3fc;">Scripts / Herramientas pequeñas</h4>
+      <div class="code-block" style="font-size:0.78em;">proyecto/
+├─ main.py
+├─ utils.py
+├─ config.py
+├─ requirements.txt
+└─ README.md</div>
+    </div>
+    <div class="col">
+      <h4 style="color:#7dd3fc;">Data Science / Análisis</h4>
+      <div class="code-block" style="font-size:0.78em;">proyecto/
+├─ notebooks/
+│  └─ 01_exploration.ipynb
+├─ data/
+│  ├─ raw/
+│  └─ processed/
+├─ scripts/
+└─ requirements.txt</div>
+    </div>
+  </div>
+  <div class="code-block" style="margin-top:0;"># Proyectos medianos / grandes
+proyecto/
+├─ src/
+│  ├─ module1/
+│  │  ├─ __init__.py
+│  │  └─ core.py
+│  └─ config.py
+├─ tests/
+├─ requirements.txt
+└─ README.md</div>
+
+  <h3>2. Imports — 3 grupos, orden alfabético</h3>
+  <div class="code-block"># 1. Standard library
+import os
+import sys
+from pathlib import Path
+from datetime import datetime
+
+# 2. Third-party (instalados con pip)
+import requests
+import pandas as pd
+import numpy as np
+
+# 3. Locales (propios del proyecto)
+from utils import helper_function, process_data
+from config import API_KEY, DEBUG_MODE</div>
+  <ul>
+    <li>Un grupo por categoría, separados por una línea en blanco</li>
+    <li>Orden alfabético dentro de cada grupo</li>
+    <li>Imports específicos siempre — <span class="bad">nunca</span> <code>from module import *</code></li>
+  </ul>
+
+  <h3>3. Naming conventions</h3>
+  <table>
+    <thead><tr><th>Tipo</th><th>Convención</th><th>Ejemplo</th></tr></thead>
+    <tbody>
+      <tr><td>Variables y funciones</td><td><code>snake_case</code></td><td><code>user_name</code>, <code>process_data()</code></td></tr>
+      <tr><td>Constantes</td><td><code>UPPER_CASE</code></td><td><code>API_KEY</code>, <code>MAX_RETRIES</code></td></tr>
+      <tr><td>Clases</td><td><code>PascalCase</code></td><td><code>UserManager</code>, <code>DataProcessor</code></td></tr>
+      <tr><td>Métodos/atributos privados</td><td><code>_underscore_prefix</code></td><td><code>_validate_email()</code>, <code>_internal_data</code></td></tr>
+    </tbody>
+  </table>
+  <p>El prefijo <code>_</code> en métodos y atributos privados es una señal de "implementación interna — no usar desde fuera". Python no lo bloquea técnicamente, pero es una convención que todos respetan.</p>
+
+  <h3>4. F-strings para formateo</h3>
+  <div class="code-block"># ✅ Siempre f-strings
+name = "Ana"
+age = 30
+message = f"Nombre: {name}, Edad: {age}"
+total = f"Total: {price * quantity}"
+formatted = f"Valor: {number:.2f}"  # 2 decimales
+
+# ❌ No usar .format() ni %
+message = "Nombre: {}, Edad: {}".format(name, age)  # evitar
+message = "Nombre: %s, Edad: %d" % (name, age)       # evitar</div>
+
+  <h3>5. Longitud de línea — 120 caracteres</h3>
+  <div class="code-block"># ✅ Bien (bajo 120 caracteres)
+result = long_function_name(arg1, arg2, arg3) if condition else default_value
+
+# ❌ Demasiado largo (over 120)
+result = very_long_function_name_unnecessarily_verbose(argument_one, argument_two, argument_three, argument_four)
+
+# ✅ Partir si es necesario
+result = (
+    very_long_function_name(arg1, arg2, arg3)
+    if condition
+    else default_value
+)</div>
+
+  <h3>6. Comentarios — solo el POR QUÉ</h3>
+  <div class="code-block"># ✅ Bueno — explica el POR QUÉ, no el QUÉ
+def calculate_discount(price, customer_type):
+    # VIP customers get 15% discount (business rule from 2024 Q1)
+    if customer_type == 'VIP':
+        return price * 0.85
+    return price
+
+# ❌ Malo — explica el QUÉ (el código ya lo dice)
+def calculate_discount(price, customer_type):
+    # If customer is VIP, multiply by 0.85
+    if customer_type == 'VIP':
+        return price * 0.85</div>
+
+  <h3>7. Logging vs print()</h3>
+  <div class="code-block">import logging
+
+# Desarrollo / debugging: print()
+print(f"Debug: user={user_name}")
+
+# Eventos importantes y producción: logging
+logging.info("Application started")
+logging.warning("High memory usage detected")
+logging.error("Failed to connect to database")
+
+# Setup en main
+if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )</div>
+
+  <h3>8. config.py para constantes y configuración</h3>
+  <div class="code-block"># config.py
+DEBUG_MODE = True
+MAX_RETRIES = 3
+TIMEOUT_SECONDS = 30
+
+# Variables sensibles desde environment
+import os
+API_KEY = os.getenv('API_KEY', 'default-for-dev')
+DATABASE_URL = os.getenv('DATABASE_URL')</div>
+  <p>Las constantes van en <code>config.py</code>, no dispersas en el código. Las variables sensibles (API keys, passwords) siempre desde variables de entorno.</p>
+</div>
+
+<!-- REFERENCIA RÁPIDA -->
+<div class="card">
+  <h2>Referencia rápida</h2>
+  <table>
+    <thead><tr><th>Elemento</th><th>Regla</th></tr></thead>
+    <tbody>
+      <tr><td>Indentación</td><td>4 espacios (nunca tabs)</td></tr>
+      <tr><td>Longitud de línea</td><td>Máximo 120 caracteres</td></tr>
+      <tr><td>Strings</td><td>Comillas simples por defecto; dobles si hay apóstrofe</td></tr>
+      <tr><td>Formateo de strings</td><td>F-strings siempre (Python 3.6+)</td></tr>
+      <tr><td>Variables y funciones</td><td><code>snake_case</code></td></tr>
+      <tr><td>Constantes</td><td><code>UPPER_CASE</code></td></tr>
+      <tr><td>Clases</td><td><code>PascalCase</code></td></tr>
+      <tr><td>Privados</td><td><code>_underscore_prefix</code></td></tr>
+      <tr><td>Imports</td><td>3 grupos (stdlib → third-party → local), alfabético</td></tr>
+      <tr><td>Wildcard imports</td><td>Nunca (<code>from x import *</code>)</td></tr>
+      <tr><td>Líneas en blanco</td><td>2 antes de funciones/clases top-level; 1 entre métodos</td></tr>
+      <tr><td>Docstrings</td><td>Módulo, clase y función (Google style)</td></tr>
+      <tr><td>Comentarios</td><td>Solo el POR QUÉ; nunca el QUÉ</td></tr>
+      <tr><td>Excepciones</td><td>Específicas; logging siempre; nunca bare <code>except:</code></td></tr>
+      <tr><td>Logging</td><td><code>print()</code> en desarrollo; <code>logging</code> en producción</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
