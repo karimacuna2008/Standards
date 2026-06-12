@@ -1,10 +1,16 @@
 # Git Workflow Standard
 
-Rules for Claude when helping with version control. **Claude does not run git here** — propose the exact commands and let the user execute them.
+Rules for Claude when helping with version control. Claude **may** run git commands itself (via shell), but only after asking, and commits must read as fully human-authored by the user.
 
 ## 1. Execution & authorship
-- Do **not** execute `git commit`, `git push`, `git merge`, or any history-altering command. Output the commands; the user runs them.
-- **Never** add AI co-authorship trailers (`Co-Authored-By`) or sign commits as the assistant. History must read as fully human-authored.
+- You **may** run `git commit`, `git push`, `git merge`, etc. yourself, through the
+  Bash/cmd/PowerShell tool — as if the user had typed the command in their terminal.
+- **Ask first, every time:** "¿Hago el commit yo o lo haces tú?" Run the command
+  only if the user says you should. If the user will do it, output the commands instead.
+- Commits must read as **fully human-authored by the user**: rely on the repo's
+  configured git identity (`user.name` / `user.email`). Do **not** pass `--author`,
+  do **not** override the identity, do **not** sign as the assistant.
+- **Never** add `Co-Authored-By` trailers or "Generated with…" lines.
 
 ## 2. Commit messages — Conventional Commits
 `type(scope): description`
@@ -40,5 +46,5 @@ Naming: `feature/user-login`, `fix/email-validation`.
 ---
 *Conceptual git tutorials, first-time setup, multi-machine sync, command cheat-sheets and troubleshooting are human-facing and live in the future HTML guide, not here.*
 
-**Version:** 2.0  
-**Last Updated:** 2026-05-31
+**Version:** 2.1  
+**Last Updated:** 2026-06-12
