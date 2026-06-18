@@ -6,26 +6,41 @@ Google Cloud Run with automatic deployment from GitHub. The build engine is
 branch rebuilds and redeploys.
 
 ## 1. Execution & deploy authorization
-- CI/CD is **not always used**. Depending on the project, deploys are either
-  automatic (push to a branch → Cloud Build rebuilds → Cloud Run updates) or
-  **manual via commands** (`gcloud run deploy`, `gcloud builds submit`, etc.).
-- You **may** run deploy commands yourself through the Bash/cmd/PowerShell tool,
-  as if the user had typed them — but **ask first, every time:**
-  "¿Ejecuto el deploy yo o lo haces tú?" Run only if the user confirms; otherwise
-  output the commands for the user to run.
+- Every project that connects a repo to Cloud Run uses **CI/CD, always** — no
+  manual deploys once it's set up. A **Cloud Build trigger** fires on every push
+  to the relevant branch, builds the image, and updates the Cloud Run service.
+  Never use GitHub Actions for this — Cloud Build is the only build engine.
+- You **may** run the one-time setup commands yourself (`gcloud builds triggers
+  create`, `gcloud run deploy` for the first manual creation, etc.) through the
+  Bash/cmd/PowerShell tool, as if the user had typed them — but **ask first,
+  every time:** "¿Ejecuto el setup yo o lo haces tú?" Run only if the user
+  confirms; otherwise output the commands for the user to run.
 - Same authorship rule as `git-workflow.md`: any git push that triggers a deploy
   must read as fully human-authored (configured identity, no `Co-Authored-By`).
 
 ## 2. Branch → environment mapping
-Mirror the Git workflow (see `git-workflow.md`):
+Mirror the branch model decided in `git-workflow.md`:
+
+**Two-branch model** (`main` + `develop`):
 
 | Branch | Cloud Run service | Updates on |
 |---|---|---|
-| `develop` | `dev-<service-name>` | every push to `develop` |
-| `main` | `<service-name>` (prod) | merge of an approved PR |
+| `develop` | `<service-name>-dev` | every push to `develop` |
+| `main` | `<service-name>-prod` | every push to `main` |
+
+**Single-branch model** (`main` only):
+
+| Branch | Cloud Run service | Updates on |
+|---|---|---|
+| `main` | `<service-name>` (no suffix) | every push to `main` |
 
 One service per environment, each with its own env vars/secrets and its own
-build trigger. Never point both branches at the same service.
+Cloud Build trigger. Never point both branches at the same service.
+
+**Service naming:** propose a base name similar to the project name and
+**ask the user to confirm it before creating any trigger** — e.g. "¿Te parece
+bien `<service-name>` como nombre base?" Append `-dev` / `-prod` only when the
+two-branch model applies; the single-branch model uses the base name as-is.
 
 ## 3. Container build — Dockerfile required
 Prefer an explicit `Dockerfile` over buildpacks (reproducible base image, no
@@ -59,6 +74,18 @@ Recommended baseline for an internal API on the free tier:
 - Grant that service account only the roles it needs (Firestore, Drive/Sheets, etc.).
 - App secrets (e.g. API keys) go in **Secret Manager**, mounted as env vars in the
   service — never in the repo, never in the Dockerfile.
+- **Naming when a secret has multiple dataset/environment variants** (e.g. a QA
+  database vs. a production database): suffix the secret name with the variant
+  (`_QA`, `_PROD`, etc.), and always mount it on Cloud Run under an env var with
+  the **exact same name** as the secret — `--set-secrets
+  "MYSQL_HOST_X_QA=MYSQL_HOST_X_QA:latest"`, never a renamed env var on one side.
+  Each service/branch only gets the secrets for the variant it actually uses.
+- It's fine to create and mount a secret on a service **before the code reads
+  it** (e.g. staging `_PROD` credentials on a service that's still only using
+  `_QA`) — as long as the app's settings loader ignores unknown env vars
+  (e.g. `pydantic-settings` with `extra="ignore"`), the unused secret is inert
+  and won't break startup. This is a valid way to have credentials ready ahead
+  of the code that will consume them.
 
 ## 6. Pre-flight checklist
 1. Repo is on GitHub and the target branch is pushed.
@@ -68,5 +95,5 @@ Recommended baseline for an internal API on the free tier:
 5. Env vars / secrets configured on the service (not in code).
 
 ---
-**Version:** 1.1
-**Last Updated:** 2026-06-12
+**Version:** 1.3
+**Last Updated:** 2026-06-17
