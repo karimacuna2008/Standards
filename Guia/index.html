@@ -260,6 +260,39 @@ For every function or method (native or library-based), detail:
 
 ---
 
+## \u{1F504} 3. CONTEXT MANAGEMENT & CONTINUITY
+
+When accumulated context grows large, recommend the user run \`/compact\` or
+\`/clear\` as appropriate:
+
+**When to recommend \`/compact\`:**
+- The current task or phase is still in progress (not finished)
+- Upcoming work depends on recent details (decisions, code, debugging) that
+  should be preserved in summarized form, not discarded
+- Context space just needs to be freed up, with no change in scope or goal
+
+**When to recommend \`/clear\`** (and provide a ready-to-paste starter comment
+for the next session):
+- The current phase or task is complete and what follows has a different scope or goal
+- The accumulated context contains information no longer relevant to next steps
+  (resolved bugs, prior exploration, discarded approaches)
+- The user asks whether it would be convenient to clear the context
+
+**When recommending \`/clear\`, always include:**
+A complete, specific comment the user can paste at the start of the next session:
+- What was accomplished or decided in the current session
+- The exact point where work will resume
+- What to do next and in what order
+
+**Starter comment format:**
+> Refer to CLAUDE.md
+> Context: [brief summary of what was done / where we left off]
+> Next: [what to do, starting from [file / function / phase / step]]
+
+Keep it concise but complete enough that the new session needs no re-explanation.
+
+---
+
 ## ✅ ABOUT THIS PROJECT
 
 [Add project-specific context here]
@@ -326,6 +359,39 @@ Para cada función o método (nativo o de librería), detalla:
 - **Parámetros:** Desglose de los argumentos y qué controlan.
 - **Valores de Retorno:** Qué devuelve y su impacto en el flujo posterior.
 - **Variables:** Desglose de las variables utilizadas y las que se crearán.
+
+---
+
+## \u{1F504} 3. GESTIÓN DE CONTEXTO Y CONTINUIDAD
+
+Cuando el contexto acumulado crezca, recomienda al usuario \`/compact\` o \`/clear\`
+según corresponda:
+
+**Cuándo recomendar \`/compact\`:**
+- La tarea o fase actual sigue en curso (no terminó)
+- El trabajo siguiente depende de detalles recientes (decisiones, código, debugging)
+  que conviene preservar de forma resumida, no descartar
+- Solo se necesita liberar espacio de contexto, sin cambio de alcance u objetivo
+
+**Cuándo recomendar \`/clear\`** (y proporciona un comentario de inicio listo para
+pegar en la siguiente sesión):
+- La fase o tarea actual está completa y lo que sigue tiene un alcance u objetivo diferente
+- El contexto acumulado contiene información ya no relevante para los próximos pasos
+  (bugs resueltos, exploración previa, enfoques descartados)
+- El usuario pregunta si conviene limpiar el contexto
+
+**Al recomendar \`/clear\`, siempre incluye:**
+Un comentario completo y específico que el usuario pueda pegar al inicio de la siguiente sesión:
+- Qué se logró o decidió en la sesión actual
+- El punto exacto donde se retomará el trabajo
+- Qué hacer a continuación y en qué orden
+
+**Formato del comentario de inicio:**
+> Refiere a CLAUDE.md
+> Contexto: [resumen breve de lo que se hizo / dónde nos quedamos]
+> Siguiente: [qué hacer, comenzando desde [archivo / función / fase / paso]]
+
+Debe ser conciso pero suficientemente completo para que la nueva sesión arranque sin re-explicaciones.
 
 ---
 

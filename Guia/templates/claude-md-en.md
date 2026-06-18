@@ -58,6 +58,39 @@ For every function or method (native or library-based), detail:
 
 ---
 
+## 🔄 3. CONTEXT MANAGEMENT & CONTINUITY
+
+When accumulated context grows large, recommend the user run `/compact` or
+`/clear` as appropriate:
+
+**When to recommend `/compact`:**
+- The current task or phase is still in progress (not finished)
+- Upcoming work depends on recent details (decisions, code, debugging) that
+  should be preserved in summarized form, not discarded
+- Context space just needs to be freed up, with no change in scope or goal
+
+**When to recommend `/clear`** (and provide a ready-to-paste starter comment
+for the next session):
+- The current phase or task is complete and what follows has a different scope or goal
+- The accumulated context contains information no longer relevant to next steps
+  (resolved bugs, prior exploration, discarded approaches)
+- The user asks whether it would be convenient to clear the context
+
+**When recommending `/clear`, always include:**
+A complete, specific comment the user can paste at the start of the next session:
+- What was accomplished or decided in the current session
+- The exact point where work will resume
+- What to do next and in what order
+
+**Starter comment format:**
+> Refer to CLAUDE.md
+> Context: [brief summary of what was done / where we left off]
+> Next: [what to do, starting from [file / function / phase / step]]
+
+Keep it concise but complete enough that the new session needs no re-explanation.
+
+---
+
 ## ✅ ABOUT THIS PROJECT
 
 [Add project-specific context here]

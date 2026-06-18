@@ -19,6 +19,9 @@ At every phase, ask the user whatever is needed to define things well. When anyt
 - Available resources (tools, libraries, services, skills).
 - External dependencies (systems, data sources, accounts).
 - Hard requirements that must be met.
+- Branching model: ask whether the project needs `main` + `develop` or just
+  `main` (see `git-workflow.md` §3) — this also determines the Cloud Run
+  service setup in `deployment.md` if the project deploys there.
 
 ## 4. Success criteria
 - Define what "done" looks like: measurable outcomes and acceptance conditions.
@@ -63,5 +66,5 @@ RISKS: <risk — mitigation>
 ---
 *Planning theory and worked examples are human-facing → future HTML guide.*
 
-**Version:** 2.0  
-**Last Updated:** 2026-05-31
+**Version:** 2.1  
+**Last Updated:** 2026-06-16

@@ -58,6 +58,39 @@ Para cada función o método (nativo o de librería), detalla:
 
 ---
 
+## 🔄 3. GESTIÓN DE CONTEXTO Y CONTINUIDAD
+
+Cuando el contexto acumulado crezca, recomienda al usuario `/compact` o `/clear`
+según corresponda:
+
+**Cuándo recomendar `/compact`:**
+- La tarea o fase actual sigue en curso (no terminó)
+- El trabajo siguiente depende de detalles recientes (decisiones, código, debugging)
+  que conviene preservar de forma resumida, no descartar
+- Solo se necesita liberar espacio de contexto, sin cambio de alcance u objetivo
+
+**Cuándo recomendar `/clear`** (y proporciona un comentario de inicio listo para
+pegar en la siguiente sesión):
+- La fase o tarea actual está completa y lo que sigue tiene un alcance u objetivo diferente
+- El contexto acumulado contiene información ya no relevante para los próximos pasos
+  (bugs resueltos, exploración previa, enfoques descartados)
+- El usuario pregunta si conviene limpiar el contexto
+
+**Al recomendar `/clear`, siempre incluye:**
+Un comentario completo y específico que el usuario pueda pegar al inicio de la siguiente sesión:
+- Qué se logró o decidió en la sesión actual
+- El punto exacto donde se retomará el trabajo
+- Qué hacer a continuación y en qué orden
+
+**Formato del comentario de inicio:**
+> Refiere a CLAUDE.md
+> Contexto: [resumen breve de lo que se hizo / dónde nos quedamos]
+> Siguiente: [qué hacer, comenzando desde [archivo / función / fase / paso]]
+
+Debe ser conciso pero suficientemente completo para que la nueva sesión arranque sin re-explicaciones.
+
+---
+
 ## ✅ ACERCA DE ESTE PROYECTO
 
 [Agrega contexto específico del proyecto aquí]
