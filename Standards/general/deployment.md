@@ -51,8 +51,9 @@ entrypoint guessing). Mandatory requirements:
 - Copy `requirements.txt` and install **before** copying app code (layer cache).
 - Use the shell form for `CMD` when the start command references `$PORT`, so the
   variable expands. Example: `CMD ["sh","-c","uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"]`.
-- Ship a `.dockerignore` (mirror `.gcloudignore`) so `.git/`, `.venv/`, and
-  especially `.env` secrets never enter the image.
+- Ship a `.dockerignore` (mirror `.gcloudignore`) so `.git/`, `.venv/`,
+  `.env` secrets, `CLAUDE.md`, and `docs/superpowers/` never enter the image
+  (same exclusions as `.gitignore` per `git-workflow.md` §7).
 - Pin every dependency; remove unused ones to keep builds fast and the surface small.
 
 ## 4. Cloud Run service configuration
@@ -95,5 +96,5 @@ Recommended baseline for an internal API on the free tier:
 5. Env vars / secrets configured on the service (not in code).
 
 ---
-**Version:** 1.3
+**Version:** 1.4
 **Last Updated:** 2026-06-17
