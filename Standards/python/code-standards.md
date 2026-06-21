@@ -141,6 +141,32 @@ class DataProcessor:
     pass
 ```
 
+### Descriptive Names (No Ambiguous Abbreviations)
+
+Every variable, parameter, and attribute name must be unambiguous **on its own**,
+without needing surrounding code or comments to know what it holds. Prefer the
+full word over a truncated one. This applies everywhere — local variables,
+function parameters, module-level constants, and **database columns**
+(see `general/database.md` for the PK/FK-specific rules).
+
+```python
+# ❌ BAD - unclear without reading the rest of the function
+addr = shipstream.get_order_address(order_id)
+notif = Notification(...)
+tmp = compute_total()
+
+# ✅ GOOD - self-explanatory standalone
+order_address_data = shipstream.get_order_address(order_id)
+notification = Notification(...)
+subtotal = compute_total()
+```
+
+**Rule:** No truncated names (`addr`, `notif`, `tmp`, `val`, `obj`, `cfg`) and no
+generic placeholders (`data`, `item`, `value`) when a more specific noun is
+available from the domain. Prefer `_CUSTOMER_ADDRESS_FIELD_MAP` over
+`_ADDRESS_FIELD_MAP` when the map's values are customer fields, not just
+address fields. Full words only — no exceptions for DB schemas either.
+
 ### Private Methods / Attributes
 ```python
 class UserManager:
