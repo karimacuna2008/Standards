@@ -21,18 +21,18 @@ branch rebuilds and redeploys.
 ## 2. Branch → environment mapping
 Mirror the branch model decided in `git-workflow.md`:
 
-**Two-branch model** (`main` + `develop`):
+**Two-branch model** (`master` + `develop`):
 
 | Branch | Cloud Run service | Updates on |
 |---|---|---|
 | `develop` | `<service-name>-dev` | every push to `develop` |
-| `main` | `<service-name>-prod` | every push to `main` |
+| `master` | `<service-name>-prod` | every push to `master` |
 
-**Single-branch model** (`main` only):
+**Single-branch model** (`master` only):
 
 | Branch | Cloud Run service | Updates on |
 |---|---|---|
-| `main` | `<service-name>` (no suffix) | every push to `main` |
+| `master` | `<service-name>` (no suffix) | every push to `master` |
 
 One service per environment, each with its own env vars/secrets and its own
 Cloud Build trigger. Never point both branches at the same service.

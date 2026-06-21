@@ -19,8 +19,8 @@ At every phase, ask the user whatever is needed to define things well. When anyt
 - Available resources (tools, libraries, services, skills).
 - External dependencies (systems, data sources, accounts).
 - Hard requirements that must be met.
-- Branching model: ask whether the project needs `main` + `develop` or just
-  `main` (see `git-workflow.md` §3) — this also determines the Cloud Run
+- Branching model: ask whether the project needs `master` + `develop` or just
+  `master` (see `git-workflow.md` §3) — this also determines the Cloud Run
   service setup in `deployment.md` if the project deploys there.
 
 ## 4. Success criteria

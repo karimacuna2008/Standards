@@ -24,35 +24,37 @@ Examples:
 - `docs(readme): update installation instructions`
 
 ## 3. Branch model
-At the start of every project, ask: **"¿Este proyecto necesita ramas `main` y `develop`, o solo `main`?"** Not every project needs the two-branch model — pick one of the following and stick to it for the life of the project.
+At the start of every project, ask: **"¿Este proyecto necesita ramas `master` y `develop`, o solo `master`?"** Not every project needs the two-branch model — pick one of the following and stick to it for the life of the project.
 
 **Two-branch model** (when approved):
-- **main** — stable, release-ready code only.
+- **master** — stable, release-ready code only.
 - **develop** — integration branch; all work merges here first.
 - **feature/**, **fix/** — temporary; branch off `develop`, delete after merge.
 
 **Single-branch model** (when the project doesn't need staged releases):
-- **main** — the only long-lived branch.
-- **feature/**, **fix/** — temporary; branch off `main`, delete after merge.
+- **master** — the only long-lived branch.
+- **feature/**, **fix/** — temporary; branch off `master`, delete after merge.
 
 Naming: `feature/user-login`, `fix/email-validation`.
 
 This decision also drives the Cloud Run service setup in `deployment.md`.
 
+**Migrating an existing repo from `main` to `master`:** this convention applies to new projects going forward. A repo that already has `main` with CI/CD deployed against it (Cloud Build trigger, GitHub Actions, etc.) keeps `main` — never rename it on your own initiative. Only migrate a specific existing repo when the user explicitly asks for that repo by name, since renaming the default branch requires reconfiguring the deploy trigger too.
+
 ## 4. Merging
 - **Two-branch model:**
   - **feature → develop:** squash into a single commit summarizing the work (Conventional Commits format).
-  - **develop → main:** merge on release; squash optional (one commit per release).
+  - **develop → master:** merge on release; squash optional (one commit per release).
 - **Single-branch model:**
-  - **feature → main:** squash into a single commit summarizing the work (Conventional Commits format).
+  - **feature → master:** squash into a single commit summarizing the work (Conventional Commits format).
 - One feature/fix per branch.
 
 ## 5. Tags — Semantic Versioning
-`vMAJOR.MINOR.PATCH` — `v1.0.0` first release · `v1.1.0` new features · `v1.1.1` fixes only. Tag `main` after a release merge.
+`vMAJOR.MINOR.PATCH` — `v1.0.0` first release · `v1.1.0` new features · `v1.1.1` fixes only. Tag `master` after a release merge.
 
 ## 6. Standing rules
 - Small, meaningful commits — Conventional Commits always.
-- Keep `develop` stable (only tested code); keep `main` for releases.
+- Keep `develop` stable (only tested code); keep `master` for releases.
 - Delete feature branches after merging.
 
 ## 7. Files that never get committed
@@ -67,5 +69,5 @@ If either file was already committed before this rule was applied, untrack it wi
 ---
 *Conceptual git tutorials, first-time setup, multi-machine sync, command cheat-sheets and troubleshooting are human-facing and live in the future HTML guide, not here.*
 
-**Version:** 2.3  
-**Last Updated:** 2026-06-17
+**Version:** 2.4  
+**Last Updated:** 2026-06-20
