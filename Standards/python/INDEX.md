@@ -13,5 +13,8 @@ Lee este archivo primero para saber qué estándar usar según la tarea.
 | `project-structure.md` | Estructura de carpetas, organización de módulos, layout del proyecto |
 | `testing.md` | Tests con pytest, organización de tests, convenciones |
 | `data-analysis.md` | EDA, carga y limpieza de datos (en progreso) |
+| `cloud-services-gcp.md` | Integración GCP: Firestore, Cloud Storage, Firebase Auth, Cloud Logging, Cloud Build deploy |
+| `fastapi-async.md` | Endpoints FastAPI: cuándo `async def` vs `def`; no bloquear el event loop |
+| `api-security.md` | Seguridad de API: comparación de tokens, auth de endpoints/webhooks, validación de payload |
 
 > Cuando crees un nuevo estándar Python, agrégalo a esta tabla antes de cerrar la sesión.

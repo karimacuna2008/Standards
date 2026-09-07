@@ -6,8 +6,8 @@ Reglas para diseñar y nombrar esquemas SQL (MySQL/PostgreSQL) en cualquier proy
 
 ## 1. Primary Keys — nunca `id` a secas
 
-Toda PK se llama `<entidad>_id`, nunca solo `id`. Esto hace que los joins sean
-autoexplicativos sin necesidad de alias: al ver `merchant_id` en cualquier
+Toda PK se llama `id_<entidad>`, nunca solo `id`. Esto hace que los joins sean
+autoexplicativos sin necesidad de alias: al ver `id_merchant` en cualquier
 tabla, queda claro de dónde viene sin tener que revisar el schema.
 
 ```sql
@@ -19,7 +19,7 @@ CREATE TABLE merchants (
 
 -- ✅ GOOD
 CREATE TABLE merchants (
-    merchant_id INT PRIMARY KEY,
+    id_merchant INT PRIMARY KEY,
     ...
 );
 ```
@@ -27,13 +27,13 @@ CREATE TABLE merchants (
 ## 2. Foreign Keys — mismo nombre que la PK que referencian
 
 Por defecto, una FK se llama exactamente igual que la PK a la que apunta.
-Nunca `merchant` o `mid` cuando la PK es `merchant_id`.
+Nunca `merchant` o `mid` cuando la PK es `id_merchant`.
 
 ```sql
 CREATE TABLE orders (
-    buho_order_id BIGINT PRIMARY KEY,
-    merchant_id INT,  -- mismo nombre que merchants.merchant_id
-    FOREIGN KEY (merchant_id) REFERENCES merchants(merchant_id)
+    id_buho_order BIGINT PRIMARY KEY,
+    id_merchant INT,  -- mismo nombre que merchants.id_merchant
+    FOREIGN KEY (id_merchant) REFERENCES merchants(id_merchant)
 );
 ```
 
@@ -93,7 +93,7 @@ un humano (ej. vía un panel de administración), va nullable.
 
 ```sql
 CREATE TABLE merchants (
-    merchant_id INT PRIMARY KEY,
+    id_merchant INT PRIMARY KEY,
     merchant_name VARCHAR(255) NOT NULL,  -- siempre lo resuelve el sistema
     merchant_phone VARCHAR(50),           -- lo captura un humano después
     chatbot_url VARCHAR(500)              -- lo captura un humano después
@@ -102,5 +102,5 @@ CREATE TABLE merchants (
 
 ---
 
-**Version:** 1.0
-**Last Updated:** 2026-06-20
+**Version:** 1.1
+**Last Updated:** 2026-08-08

@@ -25,6 +25,11 @@ How to test Python projects. When refactoring existing code, start with **charac
 - `pytest` (all) · `pytest tests/test_total_videos.py -v` (one module).
 - Green before and after every refactor step — no exceptions.
 
+## 6. GUI (tkinter) Flows — Manual Checklist Instead of Mocked Automation
+- Any function that opens real tkinter windows/dialogs (`simpledialog`, `messagebox`, `filedialog`, `.mainloop()`) is **excluded** from automated pytest coverage. Mocking `Tk` end-to-end is disproportionately fragile for the value it returns.
+- Instead, when that flow is ready to validate: prepare a **manual test checklist** — concrete steps to perform (what to click, what to type) paired with the exact expected outcome per step (what dialog should appear, what should get saved/registered). The user runs the real script and reports pass/fail (per item or overall) at the end.
+- Applies project-wide, to every current and future tkinter-driven flow — not just the one being worked on when this rule was written.
+
 ---
-**Version:** 1.0
-**Last Updated:** 2026-06-04
+**Version:** 1.1
+**Last Updated:** 2026-07-20

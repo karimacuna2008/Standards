@@ -44,11 +44,11 @@ def validate_email(email: str) -> bool:
 **Exceptions (no type hints needed):**
 ```python
 # Simple loops
-for i in range(10):
-    x = i + 1
+for attempt_number in range(10):
+    next_value = attempt_number + 1
 
 # List comprehensions when source is obvious
-result = [n * 2 for n in numbers]  # 'numbers' already has type hint above
+doubled_amounts = [amount * 2 for amount in amounts]  # 'amounts' already has type hint above
 ```
 
 **Guidelines:**

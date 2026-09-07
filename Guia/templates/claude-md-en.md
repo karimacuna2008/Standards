@@ -91,6 +91,17 @@ Keep it concise but complete enough that the new session needs no re-explanation
 
 ---
 
+## 🔐 4. GIT COMMITS — ABSOLUTE RULE
+
+This rule never changes, no exceptions:
+
+- **Never** add a `Co-Authored-By: Claude` line (or any variant) to commit messages.
+- Commits must read as **100% human-authored by the user**: always use the Git identity already configured in the repo (`user.name` / `user.email`). Never use `--author`, never your own identity.
+- You **may** run Git commands (`git commit`, `git push`, etc.) yourself through the terminal (Bash/cmd/PowerShell) — exactly as if the user had typed them. Don't commit through any other channel (API, integration, etc.).
+- Before committing, always ask: **"Should I make the commit, or will you?"**. If the user prefers to do it themselves, hand them the commands instead of running them.
+
+---
+
 ## ✅ ABOUT THIS PROJECT
 
 [Add project-specific context here]

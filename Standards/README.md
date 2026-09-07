@@ -32,12 +32,19 @@ Standards/
 │   ├── data-analysis.md         🚧 IN PROGRESS (3/10 sections)
 │   ├── api-server.md            📝 TODO — FastAPI as a server
 │   ├── observability.md         📝 TODO — structured logs, metrics, tracing
-│   ├── cloud-services-gcp.md    📝 TODO — GCP integration (provider-specific)
+│   ├── cloud-services-gcp.md    ✅ GCP integration (provider-specific)
 │   ├── testing.md               📝 TODO
 │   ├── data-science.md          📝 TODO
 │   ├── databases.md             📝 TODO
 │   └── async.md                 📝 TODO
 ├── javascript/                  📝 TODO (planning only)
+├── prompt-driven-development/
+│   ├── kickoff.md                ✅ Project intake: purpose, scope, delivery target, existing backend → stack recommendation
+│   ├── project-structure.md      ✅ Folder layout, doc responsibilities, Estatus Actual/ granularity
+│   ├── workflow.md                ✅ Per-batch cycle, hard validation rule, memory triggers
+│   ├── prompts.md                 ✅ Prompt naming, sizing, Prompts/Validated/ lifecycle
+│   ├── architecture.md            ✅ Thin orchestrator, design tokens, Deuda tecnica/
+│   └── spec-and-plan-gate.md      ✅ When to require brainstorming+writing-plans vs. direct fix
 └── README.md                    (this file)
 ```
 
@@ -55,6 +62,8 @@ Standards/
 | `python/api-client.md` | Consume external REST APIs (HTTP client): auth, pagination, retry, client-as-dependency |
 | `python/automation.md` | CLI scripts, menu vs argparse, output conventions |
 | `python/error-handling.md` | Exception control flow: raise vs absorb, chaining, error responses (logging mechanics live in `observability.md`) |
+| `python/cloud-services-gcp.md` | GCP integration: Firestore, Cloud Storage, Firebase Auth, Cloud Logging, .gcloudignore, Cloud Build deploy |
+| `prompt-driven-development/*` | Building a full app (or a documented mockup of one) through Claude-directed batches — either an external tool generates the code from prompts, or Claude writes it directly; same folder layout, validation cycle, and architecture rules either way |
 
 ## 🚧 In progress
 
@@ -69,7 +78,6 @@ Standards/
 | `python/api-server.md` | FastAPI como servidor: routers, dependency injection, status codes, envelope de error, validación de entrada |
 | `general/auth-rbac.md` | autenticación (token, API key constant-time), autorización, modelo `modulo:accion:alcance`, scopes por prioridad |
 | `python/observability.md` | logs estructurados, niveles, redacción de sensibles, métricas y trazas (pilares, no archivos), middleware de request — general, sin proveedor |
-| `python/cloud-services-gcp.md` | integración GCP (específico): Firestore, Cloud Storage, Firebase, Cloud Logging, buckets, `.gcloudignore`, deploy |
 | `python/testing.md` | pytest, qué testear vs qué no, fixtures, naming |
 | `python/data-science.md` | ML/AI, feature engineering, entrenamiento, evaluación |
 | `python/databases.md` | queries, conexiones, ORM vs SQL, migraciones |
@@ -118,5 +126,5 @@ Standards/
 
 ---
 
-**Last Updated:** 2026-05-31  
+**Last Updated:** 2026-08-02  
 **Status:** In Progress (v1.0)

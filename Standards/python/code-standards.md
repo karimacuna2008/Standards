@@ -167,6 +167,13 @@ available from the domain. Prefer `_CUSTOMER_ADDRESS_FIELD_MAP` over
 `_ADDRESS_FIELD_MAP` when the map's values are customer fields, not just
 address fields. Full words only — no exceptions for DB schemas either.
 
+**Loop, lambda and comprehension variables — also full words.** No single-letter
+names anywhere: never `for i in ...`, `lambda n: ...`, `[x for x in ...]`. Use the
+domain noun even for the index/element (`for attempt_number in range(...)`,
+`lambda notification: ...`, `[amount * 2 for amount in amounts]`). Same for the
+common-but-vague `resp`→`response` and `exc`/`e`→`error`. This is absolute: a
+one-letter loop variable is never acceptable, no matter how short the loop.
+
 ### Private Methods / Attributes
 ```python
 class UserManager:

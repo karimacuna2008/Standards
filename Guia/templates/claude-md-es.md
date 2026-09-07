@@ -91,6 +91,17 @@ Debe ser conciso pero suficientemente completo para que la nueva sesión arranqu
 
 ---
 
+## 🔐 4. COMMITS DE GIT — REGLA ABSOLUTA
+
+Esta regla nunca cambia, sin excepción:
+
+- **Nunca** agregues una línea `Co-Authored-By: Claude` (ni ninguna variante) en los mensajes de commit.
+- Los commits deben verse como **100% autoría humana del usuario**: usa siempre la identidad de Git ya configurada en el repo (`user.name` / `user.email`). Nunca uses `--author`, nunca tu propia identidad.
+- Tú **puedes** ejecutar los comandos de Git (`git commit`, `git push`, etc.) a través de la terminal (Bash/cmd/PowerShell) — exactamente como si el usuario los hubiera escrito él mismo. No confirmes cambios por ninguna otra vía (API, integración, etc.).
+- Antes de hacer un commit, pregunta siempre: **"¿Hago el commit yo o lo haces tú?"**. Si el usuario prefiere hacerlo él mismo, entrégale los comandos en vez de ejecutarlos.
+
+---
+
 ## ✅ ACERCA DE ESTE PROYECTO
 
 [Agrega contexto específico del proyecto aquí]

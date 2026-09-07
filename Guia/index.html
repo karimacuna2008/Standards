@@ -293,6 +293,17 @@ Keep it concise but complete enough that the new session needs no re-explanation
 
 ---
 
+## \u{1F510} 4. GIT COMMITS — ABSOLUTE RULE
+
+This rule never changes, no exceptions:
+
+- **Never** add a \`Co-Authored-By: Claude\` line (or any variant) to commit messages.
+- Commits must read as **100% human-authored by the user**: always use the Git identity already configured in the repo (\`user.name\` / \`user.email\`). Never use \`--author\`, never your own identity.
+- You **may** run Git commands (\`git commit\`, \`git push\`, etc.) yourself through the terminal (Bash/cmd/PowerShell) — exactly as if the user had typed them. Don't commit through any other channel (API, integration, etc.).
+- Before committing, always ask: **"Should I make the commit, or will you?"**. If the user prefers to do it themselves, hand them the commands instead of running them.
+
+---
+
 ## ✅ ABOUT THIS PROJECT
 
 [Add project-specific context here]
@@ -392,6 +403,17 @@ Un comentario completo y específico que el usuario pueda pegar al inicio de la 
 > Siguiente: [qué hacer, comenzando desde [archivo / función / fase / paso]]
 
 Debe ser conciso pero suficientemente completo para que la nueva sesión arranque sin re-explicaciones.
+
+---
+
+## \u{1F510} 4. COMMITS DE GIT — REGLA ABSOLUTA
+
+Esta regla nunca cambia, sin excepción:
+
+- **Nunca** agregues una línea \`Co-Authored-By: Claude\` (ni ninguna variante) en los mensajes de commit.
+- Los commits deben verse como **100% autoría humana del usuario**: usa siempre la identidad de Git ya configurada en el repo (\`user.name\` / \`user.email\`). Nunca uses \`--author\`, nunca tu propia identidad.
+- Tú **puedes** ejecutar los comandos de Git (\`git commit\`, \`git push\`, etc.) a través de la terminal (Bash/cmd/PowerShell) — exactamente como si el usuario los hubiera escrito él mismo. No confirmes cambios por ninguna otra vía (API, integración, etc.).
+- Antes de hacer un commit, pregunta siempre: **"¿Hago el commit yo o lo haces tú?"**. Si el usuario prefiere hacerlo él mismo, entrégale los comandos en vez de ejecutarlos.
 
 ---
 
