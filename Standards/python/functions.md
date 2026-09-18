@@ -65,7 +65,12 @@ doubled_amounts = [amount * 2 for amount in amounts]  # 'amounts' already has ty
 ```python
 def process_orders(orders: list[dict], min_amount: float = 0) -> list[dict]:
     """Filter orders by minimum amount and format prices.
-    
+
+    Used on the checkout summary screen so a customer never sees a
+    cancelled or refunded order mixed in with what they're about to pay
+    for — without this, a $0 refunded order would render as a real line
+    item with a formatted price next to it.
+
     Args:
         orders: List of order dicts with 'amount' and 'status' keys
         min_amount: Minimum order amount to include (default: 0)
@@ -80,9 +85,15 @@ def process_orders(orders: list[dict], min_amount: float = 0) -> list[dict]:
 
 **Format:**
 - One-line summary (what it does)
+- **Purpose paragraph (required whenever the one-line summary doesn't make the real-world "why" obvious):** a short paragraph, right after the summary and before Args, that says what problem this solves or where it's used — grounded in a concrete example (a real scenario, real-looking values), not a restatement of the mechanics. Ask: if someone reads only this docstring six months from now with no memory of this conversation, will they know *why* this function exists, not just what it mechanically does? If the one-line summary already answers that (e.g. a trivial getter), skip the paragraph — don't pad obvious functions.
 - Args section (all parameters)
 - Returns section (what comes back)
 - Note section (special cases, if needed)
+
+**Regla Anti-Inflado para Funciones Privadas y Componentes UI:**
+- **No inflar funciones internas (`_helper`):** Funciones privadas que comienzan con guion bajo (`_nombre`), callbacks de UI (Streamlit, GUIs) o funciones con firmas directas y autoexplicativas **NO** deben llevar bloques redundantes de `Args:` y `Returns:` que solo parafraseen el nombre del parámetro (ej. `cliente_clave: Clave del cliente`).
+- **Docstring de 1 sola línea:** Para estas funciones, basta con una única línea clara y directa (`"""Valida la contraseña de acceso en session_state."""`).
+- **Cero documentación redundante:** El código debe ser limpio y ligero; no ocultes la lógica detrás de bloques de comentarios innecesarios.
 
 ---
 
@@ -146,5 +157,16 @@ I will **ask before creating helper functions**. You decide if it's necessary.
 
 ---
 
-**Version:** 1.0  
-**Last Updated:** 2026-05-18
+## 7. No Micro-Getters or Trivial Single-Variable Functions
+
+- **Prohibido crear funciones de una línea para devolver una sola variable:** Evitar la creación de getters triviales (`get_api_url()`, `get_token()`, `get_timeout()`). No aportan abstracción y sobrecargan la base de código.
+- **Agrupación en estructuras coherentes:** Los valores o configuraciones afines deben agruparse en estructuras de datos fuertemente tipadas (`@dataclass(frozen=True)`, `NamedTuple`, Pydantic). Los consumidores reciben el bloque completo.
+- **Cuándo SÍ separar una función independiente:**
+  - **Requiere parámetros dinámicos:** Para consultas o búsquedas específicas (`find_item(item_id)`).
+  - **Evaluación opcional o costosa (Lazy):** Para evitar cómputos innecesarios o llamadas de red anticipadas si el dato no siempre se consume.
+  - **Lógica de transformación no trivial:** Cuando realiza formateo, parseo o manejo de fallbacks.
+
+---
+
+**Version:** 1.2  
+**Last Updated:** 2026-09-17

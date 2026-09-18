@@ -192,6 +192,87 @@ PROCESSED_DATA_DIR = BASE_DIR / 'data' / 'processed'
 - For `processed/`, prefer Parquet if you will reload (fast, preserves types); CSV if a human will open it.
 - Verify the load immediately with `.shape` and `.dtypes` (links to §4).
 
+> ⚠️ **STATUS SECTIONS 4-10: DRAFT PROPOSED BY GEMINI - PENDING VALIDATION WITH CLAUDE**
+<!-- VALIDAR CON CLAUDE: Review sections 4-10 data cleaning and EDA patterns before final consolidation -->
+
 ---
 
-<!-- In progress — 3/10 sections. Next: §4 Initial inspection. -->
+## 4. Initial Inspection
+Systematically inspect the DataFrame immediately after loading. Never make assumptions about column types, missingness, or row counts:
+
+```python
+# Standard inspection sequence:
+print(f"Dataset shape: {df.shape}")
+df.info()                     # Column names, non-null counts, dtypes, memory usage
+df.head(5)                    # Verify sample rows
+print(df.isna().sum())        # Null count per column
+print(f"Duplicates: {df.duplicated().sum()}")
+```
+
+---
+
+## 5. Data Cleaning
+1. **Handling Missing Values:**
+   - Always document *why* a strategy was chosen (drop vs impute with median/mode vs domain-specific constant).
+   - Never impute target labels or primary IDs.
+2. **Type Casting:**
+   - Convert numeric columns with currency or formatting: `df['monto'] = df['monto'].str.replace('$', '').astype(float)`.
+   - String normalization: strip whitespace, lowercase categorical strings: `df['categoria'] = df['categoria'].str.strip().str.lower()`.
+3. **Deduplication:**
+   - Explicitly define subset keys for deduplication: `df = df.drop_duplicates(subset=['id_cliente', 'fecha'], keep='last')`.
+
+---
+
+## 6. Univariate Analysis
+- **Categorical Columns:** Inspect frequencies using `df['col'].value_counts(dropna=False, normalize=True)`.
+- **Numerical Columns:** Check summary statistics `df.describe(percentiles=[0.05, 0.25, 0.5, 0.75, 0.95])` to identify skewness and extreme outliers.
+
+---
+
+## 7. Bivariate & Multivariate Analysis
+- **Group Aggregations:** Use explicit dict syntax with `.agg()`:
+  ```python
+  resumen = df.groupby('categoria').agg(
+      total_ventas=('monto', 'sum'),
+      promedio_ticket=('monto', 'mean'),
+      clientes_unicos=('id_cliente', 'nunique'),
+  ).reset_index()
+  ```
+- **Correlations:** Calculate Spearman or Pearson correlations for numerical features: `df.select_dtypes(include='number').corr()`.
+
+---
+
+## 8. Visualization
+- **Seaborn / Matplotlib:** For static reproducible reports, academic papers, and exports to PDF:
+  ```python
+  import matplotlib.pyplot as plt
+  import seaborn as sns
+
+  fig, ax = plt.subplots(figsize=(10, 6))
+  sns.histplot(df['monto'], kde=True, ax=ax)
+  ax.set_title("Distribución de Monto de Ventas")
+  fig.savefig(FIGURES_DIR / "distribucion_monto.png", dpi=300, bbox_inches="tight")
+  plt.close(fig)
+  ```
+- **Plotly:** Use when interactive exploration, zoom, tooltips, or integration into Streamlit is required (`st.plotly_chart(fig)`).
+
+---
+
+## 9. Export & Reproducibility
+- Raw data in `data/raw/` is never modified.
+- Processed, analysis-ready datasets are saved to `data/processed/`:
+  - Prefer **Parquet** (`df.to_parquet('data/processed/clean_data.parquet', index=False)`) for speed, schema retention, and compression.
+  - Export CSV only when explicit human consumption in Excel is demanded.
+
+---
+
+## 10. Summary & Deliverables
+Every analysis notebook or script must conclude with a markdown cell or docstring summarizing:
+1. Key findings (3 to 5 actionable bullet points).
+2. Data anomalies or caveats identified.
+3. Output dataset location and schema.
+
+---
+**Version:** 1.0 (Draft Completed)  
+**Last Updated:** 2026-09-17
+

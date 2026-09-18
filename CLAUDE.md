@@ -65,7 +65,7 @@ Depending on the work, read the corresponding INDEX first:
 
 This workspace **authors and maintains** the centralized development standards (`Standards/`) and the usage guide (`Guia Basica/`). Its purpose is to *produce* the standards that other projects consume — it is not a normal application project.
 
-- **This file is not the reusable template.** The blank CLAUDE.md template copied into other projects lives in `Guia/templates/claude-md.html` (Copiar EN/ES).
+- **This file is not the reusable template.** Two separate, parallel root templates are copied into other projects: `CLAUDE.md` (single-agent) at `Guia/templates/claude-md.html`, and `AGENTS.md` (multi-agent, Architect/Executor) at `Guia/templates/agents-md.html` (Copiar EN/ES) — neither replaces the other; pick one per project (see `Standards/README.md` decisions log) and migrate with `Standards/general/agents-migration.md` if a project moves from one to the other later.
 - **Roadmap & decisions** (done / in progress / pending) live in `Standards/README.md` — the single source of truth for status.
 - When working here you are usually **writing or editing standard documents** (`Standards/**/*.md`); match the existing files' style and obey the validation gate above.
 - **Audience — the `Standards/**/*.md` are for Claude, not for the user.** They are written as **operational instructions** (what to do, which option to choose, in what format). They must **not** contain conceptual tutorials or human explanations (what something is, how it works, *why* X over Y). The user does not read them.
