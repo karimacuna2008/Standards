@@ -183,17 +183,17 @@
     </div>
     <div class="group-items" id="group-templates">
       <div class="template-row">
-        <span class="template-label">📄 AGENTS.md</span>
-        <div class="template-btns">
-          <button class="copy-btn copy-btn-en" id="btnAgentsEN" onclick="copyAgents('en')">EN</button>
-          <button class="copy-btn copy-btn-es" id="btnAgentsES" onclick="copyAgents('es')">ES</button>
-        </div>
-      </div>
-      <div class="template-row">
-        <span class="template-label">📄 CLAUDE.md</span>
+        <span class="template-label">📄 Agente</span>
         <div class="template-btns">
           <button class="copy-btn copy-btn-en" id="btnClaudeEN" onclick="copyClaude('en')">EN</button>
           <button class="copy-btn copy-btn-es" id="btnClaudeES" onclick="copyClaude('es')">ES</button>
+        </div>
+      </div>
+      <div class="template-row">
+        <span class="template-label">📄 Multiagente</span>
+        <div class="template-btns">
+          <button class="copy-btn copy-btn-en" id="btnAgentsEN" onclick="copyAgents('en')">EN</button>
+          <button class="copy-btn copy-btn-es" id="btnAgentsES" onclick="copyAgents('es')">ES</button>
         </div>
       </div>
     </div>
@@ -549,7 +549,7 @@ Al entrar a trabajar en cualquier pieza listada abajo, **debes leer inmediatamen
 **Última Actualización:** 2026-09-11
 **Versión de Estándares:** v1.0`;
 
-  var TEMPLATE_CLAUDE_EN = `# CLAUDE.md
+  var TEMPLATE_CLAUDE_EN = `# AGENT.md
 
 ---
 
@@ -566,7 +566,7 @@ Al entrar a trabajar en cualquier pieza listada abajo, **debes leer inmediatamen
 >
 > Once the Standards path is resolved, you MUST tell the user to run the following
 > command and wait for their confirmation before proceeding with any other task:
->   git update-index --skip-worktree CLAUDE.md
+>   git update-index --skip-worktree AGENT.md
 > Do not continue until the user confirms it was executed.
 
 Local: C:\\Users\\Karim Acuna\\OneDrive\\Desktop\\Programs\\CLAUDE\\Standards
@@ -634,7 +634,7 @@ A complete, specific comment the user can paste at the start of the next session
 - What to do next and in what order
 
 **Starter comment format:**
-> Refer to CLAUDE.md
+> Refer to AGENT.md
 > Context: [brief summary of what was done / where we left off]
 > Next: [what to do, starting from [file / function / phase / step]]
 
@@ -662,7 +662,7 @@ This rule never changes, no exceptions:
 **Last Updated:** 2026-06-08
 **Standards Version:** v1.0`;
 
-  var TEMPLATE_CLAUDE_ES = `# CLAUDE.md
+  var TEMPLATE_CLAUDE_ES = `# AGENT.md
 
 ---
 
@@ -679,7 +679,7 @@ This rule never changes, no exceptions:
 >
 > Una vez resuelta la ruta de Standards, DEBES indicarle al usuario que ejecute el
 > siguiente comando y esperar su confirmación antes de continuar con cualquier otra tarea:
->   git update-index --skip-worktree CLAUDE.md
+>   git update-index --skip-worktree AGENT.md
 > No continúes hasta que el usuario confirme que fue ejecutado.
 
 Local: C:\\Users\\Karim Acuna\\OneDrive\\Desktop\\Programs\\CLAUDE\\Standards
@@ -747,7 +747,7 @@ Un comentario completo y específico que el usuario pueda pegar al inicio de la 
 - Qué hacer a continuación y en qué orden
 
 **Formato del comentario de inicio:**
-> Refiere a CLAUDE.md
+> Refiere a AGENT.md
 > Contexto: [resumen breve de lo que se hizo / dónde nos quedamos]
 > Siguiente: [qué hacer, comenzando desde [archivo / función / fase / paso]]
 

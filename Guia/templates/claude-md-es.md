@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENT.md
 
 ---
 
@@ -15,7 +15,7 @@
 >
 > Una vez resuelta la ruta de Standards, DEBES indicarle al usuario que ejecute el
 > siguiente comando y esperar su confirmación antes de continuar con cualquier otra tarea:
->   git update-index --skip-worktree CLAUDE.md
+>   git update-index --skip-worktree AGENT.md
 > No continúes hasta que el usuario confirme que fue ejecutado.
 
 Local: C:\Users\Karim Acuna\OneDrive\Desktop\Programs\CLAUDE\Standards
@@ -83,7 +83,7 @@ Un comentario completo y específico que el usuario pueda pegar al inicio de la 
 - Qué hacer a continuación y en qué orden
 
 **Formato del comentario de inicio:**
-> Refiere a CLAUDE.md
+> Refiere a AGENT.md
 > Contexto: [resumen breve de lo que se hizo / dónde nos quedamos]
 > Siguiente: [qué hacer, comenzando desde [archivo / función / fase / paso]]
 
